@@ -1,0 +1,255 @@
+---
+title: 'Expect Utilities'
+description: 'Type assertion utilities for testing TypeScript types'
+---
+
+The Expect family of utilities provides compile-time assertions for TypeScript types. These utilities form the foundation of type testing in Type Challenges.
+
+## Expect
+
+Generic assertion wrapper that expects a type to be `true`.
+
+### Type Signature
+
+```typescript
+export type Expect<T extends true> = T
+```
+
+<ParamField path="T" type="true">
+  The type to assert. Must extend `true`, otherwise a compile-time error is produced.
+</ParamField>
+
+### Purpose
+
+Wraps boolean type expressions and produces a compile-time error if the expression does not evaluate to `true`. Commonly used with [Equal](/reference/utils/equal) to test type equality.
+
+### Examples
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+
+type cases = [
+  Expect<Equal<MyPick<Todo, 'title'>, { title: string }>>,
+  Expect<Equal<MyPick<Todo, 'title' | 'completed'>, { title: string; completed: boolean }>>,
+]
+```
+
+If `MyPick` is implemented incorrectly, TypeScript will report an error on the failing `Expect` line.
+
+---
+
+## ExpectTrue
+
+Explicitly assert that a type is `true`.
+
+### Type Signature
+
+```typescript
+export type ExpectTrue<T extends true> = T
+```
+
+<ParamField path="T" type="true">
+  The type to assert. Must be exactly `true`.
+</ParamField>
+
+### Purpose
+
+Functionally identical to `Expect`, but provides semantic clarity when testing boolean conditions. Use this when the assertion is explicitly about a boolean value being `true`.
+
+### Examples
+
+```typescript
+import type { ExpectTrue, ExpectExtends } from '@type-challenges/utils'
+
+declare const example: {
+  foo: {
+    bar: {
+      a: string
+    }
+    baz: {
+      b: number
+      c: number
+    }
+  }
+}
+
+type cases = [
+  ExpectTrue<ExpectExtends<Path<typeof example['foo']['bar']>, ['a']>>,
+  ExpectTrue<ExpectExtends<Path<typeof example['foo']['baz']>, ['b'] | ['c']>>,
+]
+```
+
+---
+
+## ExpectFalse
+
+Explicitly assert that a type is `false`.
+
+### Type Signature
+
+```typescript
+export type ExpectFalse<T extends false> = T
+```
+
+<ParamField path="T" type="false">
+  The type to assert. Must be exactly `false`.
+</ParamField>
+
+### Purpose
+
+Asserts that a boolean type expression evaluates to `false`. Useful for negative test cases.
+
+### Examples
+
+```typescript
+import type { ExpectFalse, ExpectExtends } from '@type-challenges/utils'
+
+declare const example: {
+  foo: {
+    bar: {
+      a: string
+    }
+  }
+}
+
+type cases = [
+  // Should NOT extend ['z']
+  ExpectFalse<ExpectExtends<Path<typeof example['foo']['bar']>, ['z']>>,
+]
+```
+
+```typescript
+import type { Equal, ExpectFalse } from '@type-challenges/utils'
+
+type cases = [
+  ExpectFalse<Equal<PermutationsOfTuple<[1, number, unknown]>, [unknown]>>,
+]
+```
+
+---
+
+## ExpectExtends
+
+Assert that a value type extends an expected type.
+
+### Type Signature
+
+```typescript
+export type ExpectExtends<VALUE, EXPECTED> = EXPECTED extends VALUE ? true : false
+```
+
+<ParamField path="VALUE" type="any">
+  The actual value type being tested.
+</ParamField>
+
+<ParamField path="EXPECTED" type="any">
+  The type that VALUE should extend.
+</ParamField>
+
+### Purpose
+
+Tests whether `EXPECTED` extends `VALUE`, returning `true` or `false`. This is useful for testing subtype relationships and union type compatibility.
+
+### Examples
+
+```typescript
+import type { ExpectExtends, ExpectTrue } from '@type-challenges/utils'
+
+type Path<T> = // ... implementation
+
+type cases = [
+  ExpectTrue<ExpectExtends<Path<{ a: string }>, ['a']>>,
+  ExpectTrue<ExpectExtends<string | number, string>>,
+]
+```
+
+---
+
+## ExpectValidArgs
+
+Assert that function arguments match the function's parameter types.
+
+### Type Signature
+
+```typescript
+export type ExpectValidArgs<
+  FUNC extends (...args: any[]) => any,
+  ARGS extends any[]
+> = ARGS extends Parameters<FUNC> ? true : false
+```
+
+<ParamField path="FUNC" type="(...args: any[]) => any">
+  The function type whose parameters are being validated.
+</ParamField>
+
+<ParamField path="ARGS" type="any[]">
+  The argument types to validate against the function's parameters.
+</ParamField>
+
+### Purpose
+
+Validates that a tuple of argument types matches a function's parameter types. Returns `true` if the arguments are valid, `false` otherwise.
+
+### Examples
+
+```typescript
+import type { ExpectValidArgs, ExpectTrue, ExpectFalse } from '@type-challenges/utils'
+
+type MyFunction = (a: string, b: number) => void
+
+type cases = [
+  ExpectTrue<ExpectValidArgs<MyFunction, [string, number]>>,
+  ExpectFalse<ExpectValidArgs<MyFunction, [number, string]>>,
+  ExpectFalse<ExpectValidArgs<MyFunction, [string]>>,
+]
+```
+
+---
+
+## IsTrue
+
+Assert a type is `true`.
+
+### Type Signature
+
+```typescript
+export type IsTrue<T extends true> = T
+```
+
+<ParamField path="T" type="true">
+  The type to assert. Must be exactly `true`.
+</ParamField>
+
+### Purpose
+
+Alias for `ExpectTrue`. Used for semantic clarity in type detection scenarios.
+
+---
+
+## IsFalse
+
+Assert a type is `false`.
+
+### Type Signature
+
+```typescript
+export type IsFalse<T extends false> = T
+```
+
+<ParamField path="T" type="false">
+  The type to assert. Must be exactly `false`.
+</ParamField>
+
+### Purpose
+
+Alias for `ExpectFalse`. Used for semantic clarity in type detection scenarios.

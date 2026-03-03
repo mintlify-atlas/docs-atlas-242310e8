@@ -1,0 +1,527 @@
+---
+title: Recursive Type Programming
+description: Master recursive types in TypeScript to handle nested structures, deep transformations, and complex type manipulations
+---
+
+Recursive types are TypeScript types that reference themselves in their definition. They're essential for working with nested data structures, tree-like types, and deep transformations. Understanding recursion at the type level unlocks the ability to create sophisticated type utilities.
+
+## What are Recursive Types?
+
+A recursive type is a type that refers to itself within its own definition, similar to recursive functions in programming.
+
+### Basic Example
+
+```typescript
+type NestedArray<T> = T | NestedArray<T>[];
+
+type Numbers = NestedArray<number>;
+// number | number[] | number[][] | number[][][] | ...
+
+const valid: Numbers = [1, [2, [3, [4]]]];
+```
+
+<Note>
+Just like recursive functions need a base case to avoid infinite loops, recursive types need a terminating condition to prevent infinite type expansion.
+</Note>
+
+## Deep Readonly - Your First Recursive Type
+
+From the Deep Readonly challenge, let's implement a type that makes all properties deeply readonly:
+
+```typescript
+type DeepReadonly<T> = {
+  readonly [K in keyof T]: T[K] extends object
+    ? T[K] extends Function
+      ? T[K]
+      : DeepReadonly<T[K]>  // Recursive call
+    : T[K]
+}
+```
+
+**How it works:**
+1. Make each property `readonly`
+2. Check if the property value is an object
+3. If it's a function, keep it as-is (functions shouldn't be made readonly)
+4. If it's an object, recursively apply `DeepReadonly`
+5. Otherwise, keep the primitive type as-is
+
+**Example:**
+
+```typescript
+type X = { 
+  x: { 
+    a: 1
+    b: 'hi'
+  }
+  y: 'hey'
+}
+
+type Result = DeepReadonly<X>;
+// {
+//   readonly x: {
+//     readonly a: 1;
+//     readonly b: 'hi';
+//   }
+//   readonly y: 'hey';
+// }
+```
+
+<Tip>
+The base case here is when `T[K]` is not an object - at that point, recursion stops and we return the primitive type.
+</Tip>
+
+## Flattening Arrays Recursively
+
+From the Flatten challenge, we need to flatten nested arrays:
+
+```typescript
+type Flatten<T> = T extends [infer First, ...infer Rest]
+  ? First extends any[]
+    ? [...Flatten<First>, ...Flatten<Rest>]  // Recursive on both parts
+    : [First, ...Flatten<Rest>]              // Recursive on rest
+  : T;
+```
+
+**Example:**
+
+```typescript
+type Flat = Flatten<[1, 2, [3, 4], [[[5]]]]>;
+// [1, 2, 3, 4, 5]
+```
+
+**How it works:**
+1. Extract first element and rest using `infer`
+2. If first is an array, recursively flatten it
+3. Recursively flatten the rest
+4. Combine results using spread syntax
+5. Base case: when T is not a tuple, return it as-is
+
+### Step-by-Step Execution
+
+```typescript
+Flatten<[1, [2, 3]]>
+├─ First = 1, Rest = [[2, 3]]
+├─ First is not array, so: [1, ...Flatten<[[2, 3]]>]
+│  └─ Flatten<[[2, 3]]>
+│     ├─ First = [2, 3], Rest = []
+│     ├─ First is array, so: [...Flatten<[2, 3]>, ...Flatten<[]>]
+│     │  ├─ Flatten<[2, 3]> = [2, 3]
+│     │  └─ Flatten<[]> = []
+│     └─ Result: [2, 3]
+└─ Final: [1, 2, 3]
+```
+
+## Understanding Recursion Depth
+
+TypeScript has built-in protection against infinite type recursion:
+
+```typescript
+type Infinite<T> = Infinite<T>; // Error: Type alias 'Infinite' circularly references itself
+```
+
+However, TypeScript allows up to **50 levels of recursion** (this may vary by version):
+
+```typescript
+type Deep50 = DeepReadonly<{
+  level1: {
+    level2: {
+      // ... up to level 50
+    }
+  }
+}> // Works fine
+
+type Deep51 = DeepReadonly<{
+  // ... 51 levels deep
+}> // May hit recursion limit
+```
+
+<Note>
+If you hit the recursion limit, you'll see: "Type instantiation is excessively deep and possibly infinite." In practice, 50 levels is usually sufficient for real-world use cases.
+</Note>
+
+## Common Recursive Patterns
+
+### 1. Deep Partial
+
+Make all properties deeply optional:
+
+```typescript
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object
+    ? DeepPartial<T[K]>
+    : T[K]
+}
+
+type User = {
+  name: string;
+  profile: {
+    age: number;
+    address: {
+      street: string;
+    }
+  }
+}
+
+type PartialUser = DeepPartial<User>;
+// {
+//   name?: string;
+//   profile?: {
+//     age?: number;
+//     address?: {
+//       street?: string;
+//     }
+//   }
+// }
+```
+
+### 2. Deep Required
+
+Make all properties deeply required:
+
+```typescript
+type DeepRequired<T> = {
+  [K in keyof T]-?: T[K] extends object
+    ? DeepRequired<T[K]>
+    : T[K]
+}
+```
+
+The `-?` removes the optional modifier.
+
+### 3. Path Building
+
+Create all possible paths through an object:
+
+```typescript
+type Paths<T> = T extends object
+  ? {
+      [K in keyof T]: K extends string
+        ? K | `${K}.${Paths<T[K]>}`
+        : never
+    }[keyof T]
+  : never;
+
+type User = {
+  name: string;
+  profile: {
+    age: number;
+  }
+}
+
+type UserPaths = Paths<User>;
+// 'name' | 'profile' | 'profile.age'
+```
+
+### 4. Deep Pick by Path
+
+```typescript
+type GetByPath<T, Path extends string> = 
+  Path extends `${infer First}.${infer Rest}`
+    ? First extends keyof T
+      ? GetByPath<T[First], Rest>
+      : never
+    : Path extends keyof T
+      ? T[Path]
+      : never;
+
+type User = {
+  profile: {
+    settings: {
+      theme: string;
+    }
+  }
+}
+
+type Theme = GetByPath<User, 'profile.settings.theme'>; // string
+```
+
+## Working with Arrays and Tuples
+
+### Recursive Tuple Building
+
+```typescript
+type Repeat<T, N extends number, Acc extends T[] = []> = 
+  Acc['length'] extends N
+    ? Acc
+    : Repeat<T, N, [...Acc, T]>;
+
+type FiveStrings = Repeat<string, 5>;
+// [string, string, string, string, string]
+```
+
+### Reverse a Tuple
+
+```typescript
+type Reverse<T extends any[]> = 
+  T extends [infer First, ...infer Rest]
+    ? [...Reverse<Rest>, First]
+    : T;
+
+type Original = [1, 2, 3, 4];
+type Reversed = Reverse<Original>; // [4, 3, 2, 1]
+```
+
+### Deep Flatten (All Levels)
+
+```typescript
+type DeepFlatten<T> = T extends readonly [infer First, ...infer Rest]
+  ? First extends readonly any[]
+    ? [...DeepFlatten<First>, ...DeepFlatten<Rest>]
+    : [First, ...DeepFlatten<Rest>]
+  : T extends readonly any[]
+    ? T
+    : [T];
+
+type Nested = [1, [2, [3, [4, [5]]]]];
+type Flat = DeepFlatten<Nested>; // [1, 2, 3, 4, 5]
+```
+
+## Tree Structures
+
+Recursive types excel at representing tree structures:
+
+```typescript
+type TreeNode<T> = {
+  value: T;
+  children?: TreeNode<T>[];
+}
+
+const fileSystem: TreeNode<string> = {
+  value: 'root',
+  children: [
+    {
+      value: 'src',
+      children: [
+        { value: 'index.ts' },
+        { value: 'utils.ts' }
+      ]
+    },
+    { value: 'README.md' }
+  ]
+};
+```
+
+### Extracting Leaf Values
+
+```typescript
+type Leaves<T> = T extends object
+  ? T extends any[]
+    ? T[number] extends object
+      ? Leaves<T[number]>
+      : T[number]
+    : { [K in keyof T]: Leaves<T[K]> }[keyof T]
+  : T;
+
+type Config = {
+  server: {
+    port: 3000;
+    host: 'localhost';
+  }
+  database: {
+    url: 'postgres://...';
+  }
+}
+
+type ConfigValues = Leaves<Config>; // 3000 | 'localhost' | 'postgres://...'
+```
+
+## Advanced Recursive Patterns
+
+### JSON Type Validation
+
+```typescript
+type JSONValue = 
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+
+const validJSON: JSONValue = {
+  name: 'Alice',
+  scores: [1, 2, 3],
+  metadata: {
+    nested: true,
+    values: [null, false]
+  }
+};
+```
+
+### Mutual Recursion
+
+Types can recursively reference each other:
+
+```typescript
+type Even = 0 | { next: Odd };
+type Odd = { next: Even };
+
+const two: Even = { next: { next: 0 } };
+const three: Odd = { next: { next: { next: 0 } } };
+```
+
+### Tail-Recursive Optimization Pattern
+
+Use an accumulator to avoid deep recursion:
+
+```typescript
+// Without accumulator - can hit recursion limit
+type Range<N extends number, Acc extends any[] = []> = 
+  Acc['length'] extends N
+    ? Acc
+    : Range<N, [...Acc, Acc['length']]>;
+
+// With accumulator pattern for better performance
+type RangeOpt<
+  N extends number,
+  Current extends any[] = [],
+  Acc extends number[] = []
+> = Current['length'] extends N
+  ? Acc
+  : RangeOpt<N, [...Current, 1], [...Acc, Current['length']]>;
+
+type ZeroToNine = RangeOpt<10>; // [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+## Combining Recursion with Other Features
+
+### Recursion + Template Literals
+
+```typescript
+type Split<S extends string, D extends string = ''> = 
+  S extends `${infer First}${D}${infer Rest}`
+    ? [First, ...Split<Rest, D>]
+    : S extends ''
+      ? []
+      : [S];
+
+type Path = Split<'user.profile.name', '.'>;
+// ['user', 'profile', 'name']
+```
+
+### Recursion + Conditional Types + infer
+
+```typescript
+type DeepAwaited<T> = T extends Promise<infer U>
+  ? DeepAwaited<U>
+  : T extends object
+    ? { [K in keyof T]: DeepAwaited<T[K]> }
+    : T;
+
+type Nested = Promise<Promise<{ data: Promise<string> }>>;
+type Resolved = DeepAwaited<Nested>; // { data: string }
+```
+
+## Common Pitfalls
+
+### 1. Forgetting the Base Case
+
+```typescript
+// ❌ Infinite recursion
+type Bad<T> = {
+  [K in keyof T]: Bad<T[K]>
+}
+
+// ✅ Has base case
+type Good<T> = T extends object
+  ? { [K in keyof T]: Good<T[K]> }
+  : T;
+```
+
+### 2. Not Handling Edge Cases
+
+```typescript
+// ❌ Doesn't handle arrays properly
+type BadDeep<T> = {
+  readonly [K in keyof T]: T[K] extends object
+    ? BadDeep<T[K]>
+    : T[K]
+}
+
+// ✅ Handles arrays, functions, and primitives
+type GoodDeep<T> = T extends (...args: any[]) => any
+  ? T
+  : T extends any[]
+    ? { readonly [K in keyof T]: GoodDeep<T[K]> }
+    : T extends object
+      ? { readonly [K in keyof T]: GoodDeep<T[K]> }
+      : T;
+```
+
+### 3. Circular References in Data
+
+```typescript
+type Node = {
+  value: string;
+  next?: Node;  // This is fine - it's optional
+}
+
+// But actual circular data can cause issues:
+const node: Node = { value: 'a' };
+node.next = node; // Runtime circular reference
+
+// TypeScript allows this but be careful with deep utilities
+```
+
+<Note>
+Recursive types handle self-referential type definitions fine, but runtime circular data structures can cause infinite loops in runtime code that traverses them.
+</Note>
+
+## Performance Considerations
+
+### Avoid Unnecessary Recursion
+
+```typescript
+// ❌ Recursion when not needed
+type BadUnion<T> = T extends any[]
+  ? T[number]
+  : BadUnion<T>;
+
+// ✅ Direct solution
+type GoodUnion<T extends any[]> = T[number];
+```
+
+### Use Distributive Conditional Types
+
+```typescript
+// Distributive - better performance with unions
+type ToArray<T> = T extends any ? T[] : never;
+
+type Result = ToArray<string | number>;
+// string[] | number[] (distributed)
+
+// Non-distributive
+type ToArrayNonDist<T> = [T] extends [any] ? T[] : never;
+
+type Result2 = ToArrayNonDist<string | number>;
+// (string | number)[] (not distributed)
+```
+
+## Practice Challenges
+
+Now test your recursive type skills:
+
+1. **Deep Readonly** (#9) - Make nested objects readonly
+2. **Flatten** (#459) - Flatten nested arrays
+3. **Capitalize Nest Object Keys** (#9775) - Transform nested keys
+4. **FlattenDepth** (#3243) - Flatten to specific depth
+
+## Summary
+
+Recursive types enable:
+- **Deep transformations** of nested structures
+- **Tree traversal** at the type level
+- **Arbitrary depth** handling for objects and arrays
+- **Self-referential types** for linked structures
+- **Complex type computations** through iteration
+
+Key principles:
+1. **Always have a base case** to prevent infinite recursion
+2. **Handle edge cases** like arrays, functions, and primitives
+3. **Consider performance** - avoid recursion when simpler solutions exist
+4. **Use accumulators** for tail-recursive optimization
+5. **Test with various nesting depths** to catch recursion limit issues
+
+<Tip>
+Start with simple recursive types like DeepReadonly, then progressively tackle more complex patterns. Understanding recursion deeply will make you proficient at type-level programming!
+</Tip>

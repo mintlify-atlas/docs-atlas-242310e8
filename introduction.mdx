@@ -1,0 +1,105 @@
+---
+title: Type Challenges
+description: Collection of TypeScript type challenges to help you better understand how the type system works
+---
+
+<img src="https://raw.githubusercontent.com/type-challenges/type-challenges/main/screenshots/logo.svg" alt="Type Challenges Logo" width="400" />
+
+## Master TypeScript's type system through practice
+
+High-quality types can help improve projects' maintainability while avoiding potential bugs. Type Challenges is a collection of challenges aimed at helping you better understand how the TypeScript type system works, writing your own utilities, or just having fun with the challenges.
+
+<CardGroup cols={2}>
+  <Card title="Progressive difficulty" icon="chart-line">
+    Start with warm-up challenges and progress through easy, medium, hard, and extreme levels
+  </Card>
+  <Card title="Learn by doing" icon="code">
+    Practice writing type utilities that you can use in real-world projects
+  </Card>
+  <Card title="Active community" icon="users">
+    Join developers solving real-world type problems and sharing solutions
+  </Card>
+  <Card title="Multiple environments" icon="laptop-code">
+    Solve challenges in TypeScript Playground, VS Code, or your local IDE
+  </Card>
+</CardGroup>
+
+## Why Type Challenges?
+
+TypeScript's type system is Turing complete, which means you can express incredibly complex type transformations. But understanding how to leverage this power takes practice.
+
+This project helps you:
+
+- **Understand the type system deeply** - Go beyond basic type annotations
+- **Write your own utilities** - Build reusable type helpers for your projects
+- **Avoid potential bugs** - Catch errors at compile time with precise types
+- **Join a learning community** - Ask questions and share solutions with others
+
+## Challenge categories
+
+<CardGroup cols={2}>
+  <Card title="Warm-up" icon="fire" color="#14b8a6">
+    Get started with the basics - perfect for your first challenge
+  </Card>
+  <Card title="Easy" icon="seedling" color="#7aad0c">
+    13 challenges covering fundamental type operations like Pick, Readonly, and Tuple operations
+  </Card>
+  <Card title="Medium" icon="dumbbell" color="#d9901a">
+    Advanced type manipulations including string operations and recursive types
+  </Card>
+  <Card title="Hard" icon="fire-flame-curved" color="#de3d37">
+    Complex type challenges requiring deep understanding of TypeScript's type system
+  </Card>
+</CardGroup>
+
+<Note>
+All challenges work in TypeScript's [strict mode](https://www.typescriptlang.org/tsconfig#strict).
+</Note>
+
+## How it works
+
+In Type Challenges, we use the type system itself to do assertions. You'll write type definitions that must pass type-level tests.
+
+Here's a simple example from the "Hello World" challenge:
+
+```typescript
+// Your task: change this to make the tests pass
+type HelloWorld = any // expected to be a string
+
+// Test cases (these must pass)
+type cases = [
+  Expect<NotAny<HelloWorld>>,
+  Expect<Equal<HelloWorld, string>>,
+]
+```
+
+The solution is to replace `any` with `string`:
+
+```typescript
+type HelloWorld = string // ✅ Tests pass!
+```
+
+## Getting started
+
+<CardGroup cols={3}>
+  <Card title="Quick start" icon="bolt" href="/quickstart">
+    Jump right in with your first challenge
+  </Card>
+  <Card title="Play locally" icon="terminal" href="/play-locally">
+    Set up challenges in your IDE
+  </Card>
+  <Card title="TypeScript Playground" icon="play" href="https://www.typescriptlang.org/play?install-plugin=%40type-challenges%2Fplayground-plugin">
+    Try in browser (no setup needed)
+  </Card>
+</CardGroup>
+
+## Community and resources
+
+- **Discord** - Join the [Type Challenges Discord](https://discord.gg/UgKBCq9) to discuss challenges
+- **VS Code Extension** - Install the [Type Challenges extension](https://marketplace.visualstudio.com/items?itemName=YRM.type-challenges)
+- **Share solutions** - Contribute your solutions and learn from others
+- **Propose challenges** - Have a real-world type problem? It might become a challenge!
+
+<Tip>
+Stuck on a challenge? Don't worry! The community is here to help. Many challenges have solution discussions where you can learn different approaches.
+</Tip>

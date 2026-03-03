@@ -1,0 +1,354 @@
+---
+title: Easy Challenges
+description: Master TypeScript fundamentals with 13 easy-level type challenges covering Pick, Readonly, tuples, and more
+---
+
+# Easy Challenges
+
+Easy challenges introduce fundamental TypeScript type operations. These challenges teach you essential patterns you'll use throughout your TypeScript journey.
+
+<Info>
+  **Total Challenges**: 13 | **Recommended for**: Beginners to intermediate TypeScript developers
+</Info>
+
+## Challenge List
+
+All 13 easy challenges, in recommended order:
+
+<CardGroup cols={2}>
+  <Card title="#4 - Pick" icon="hand-pointer" href="https://tsch.js.org/4/play">
+    Implement the built-in Pick utility type
+  </Card>
+  <Card title="#7 - Readonly" icon="lock" href="https://tsch.js.org/7/play">
+    Make all properties readonly
+  </Card>
+  <Card title="#11 - Tuple to Object" icon="table" href="https://tsch.js.org/11/play">
+    Convert tuple to object type
+  </Card>
+  <Card title="#14 - First of Array" icon="arrow-right" href="https://tsch.js.org/14/play">
+    Get the first element type
+  </Card>
+  <Card title="#18 - Length of Tuple" icon="ruler" href="https://tsch.js.org/18/play">
+    Get tuple length as a type
+  </Card>
+  <Card title="#43 - Exclude" icon="xmark" href="https://tsch.js.org/43/play">
+    Implement the built-in Exclude type
+  </Card>
+  <Card title="#189 - Awaited" icon="clock" href="https://tsch.js.org/189/play">
+    Unwrap Promise types
+  </Card>
+  <Card title="#268 - If" icon="code-branch" href="https://tsch.js.org/268/play">
+    Implement conditional type branching
+  </Card>
+  <Card title="#533 - Concat" icon="link" href="https://tsch.js.org/533/play">
+    Concatenate two tuple types
+  </Card>
+  <Card title="#898 - Includes" icon="magnifying-glass" href="https://tsch.js.org/898/play">
+    Check if tuple includes a type
+  </Card>
+  <Card title="#3057 - Push" icon="arrow-down" href="https://tsch.js.org/3057/play">
+    Add element to end of tuple
+  </Card>
+  <Card title="#3060 - Unshift" icon="arrow-up" href="https://tsch.js.org/3060/play">
+    Add element to start of tuple
+  </Card>
+  <Card title="#3312 - Parameters" icon="list" href="https://tsch.js.org/3312/play">
+    Get function parameter types
+  </Card>
+</CardGroup>
+
+## Featured Challenges
+
+<AccordionGroup>
+  <Accordion title="#4 - Pick" icon="hand-pointer">
+    
+### Description
+
+Implement the built-in `Pick<T, K>` generic without using it. Constructs a type by picking the set of properties `K` from `T`.
+
+### Example
+
+```typescript
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type TodoPreview = MyPick<Todo, 'title' | 'completed'>
+
+const todo: TodoPreview = {
+  title: 'Clean room',
+  completed: false,
+}
+```
+
+### Concepts
+- Mapped types
+- Key constraints
+- Index access types
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/4/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#7 - Readonly" icon="lock">
+    
+### Description
+
+Implement the built-in `Readonly<T>` generic without using it. Constructs a type with all properties of `T` set to readonly.
+
+### Example
+
+```typescript
+interface Todo {
+  title: string
+  description: string
+}
+
+const todo: MyReadonly<Todo> = {
+  title: "Hey",
+  description: "foobar"
+}
+
+todo.title = "Hello" // Error: cannot reassign a readonly property
+```
+
+### Concepts
+- Mapped types
+- Readonly modifier
+- Property iteration
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/7/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#189 - Awaited" icon="clock">
+    
+### Description
+
+Implement a type that unwraps Promise types. If we have a type which is wrapped type like Promise, how we can get the type which is inside?
+
+### Example
+
+```typescript
+type ExampleType = Promise<string>
+type Result = MyAwaited<ExampleType> // string
+
+type Nested = Promise<Promise<number>>
+type Result2 = MyAwaited<Nested> // number
+```
+
+### Concepts
+- Conditional types
+- Type inference with `infer`
+- Recursive types
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/189/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#268 - If" icon="code-branch">
+    
+### Description
+
+Implement a type `If` that accepts a condition `C`, a truthy return type `T`, and a falsy return type `F`. When `C` is `true`, return `T`, otherwise return `F`.
+
+### Example
+
+```typescript
+type A = If<true, 'a', 'b'>  // expected to be 'a'
+type B = If<false, 'a', 'b'> // expected to be 'b'
+```
+
+### Concepts
+- Conditional types
+- Boolean type checking
+- Type branching
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/268/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#898 - Includes" icon="magnifying-glass">
+    
+### Description
+
+Implement a type `Includes<T, U>` that checks if type `U` is in the tuple type `T`.
+
+### Example
+
+```typescript
+type isPillarMen = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'> // false
+type isJoJo = Includes<['Jonathan', 'Joseph', 'Jotaro'], 'Joseph'> // true
+```
+
+### Concepts
+- Tuple iteration
+- Type equality checking
+- Recursive type processing
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/898/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+</AccordionGroup>
+
+## Core Concepts
+
+Easy challenges cover these fundamental patterns:
+
+### 1. Mapped Types
+
+Iterate over object keys and transform properties:
+
+```typescript
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K]
+}
+```
+
+### 2. Conditional Types
+
+Create types based on conditions:
+
+```typescript
+type If<C extends boolean, T, F> = C extends true ? T : F
+```
+
+### 3. Index Access
+
+Access specific properties or elements:
+
+```typescript
+type First<T extends any[]> = T[0]
+```
+
+### 4. Type Inference
+
+Extract types using `infer`:
+
+```typescript
+type Awaited<T> = T extends Promise<infer R> ? R : T
+```
+
+### 5. Tuple Manipulation
+
+Work with fixed-length arrays:
+
+```typescript
+type Push<T extends any[], U> = [...T, U]
+type Unshift<T extends any[], U> = [U, ...T]
+```
+
+## Learning Path
+
+Recommended order for tackling easy challenges:
+
+<Steps>
+  <Step title="Object Utilities (4, 7)">
+    Start with Pick and Readonly to learn mapped types
+  </Step>
+  <Step title="Tuple Basics (11, 14, 18)">
+    Learn tuple type manipulation fundamentals
+  </Step>
+  <Step title="Conditionals (43, 268)">
+    Master conditional types with Exclude and If
+  </Step>
+  <Step title="Advanced Patterns (189, 898)">
+    Learn inference and recursion with Awaited and Includes
+  </Step>
+  <Step title="Tuple Operations (533, 3057, 3060, 3312)">
+    Complete your tuple manipulation skills
+  </Step>
+</Steps>
+
+## Tips for Easy Challenges
+
+<AccordionGroup>
+  <Accordion title="Master mapped types first">
+    Many challenges use mapped types. Understanding `[K in keyof T]` is essential. Practice with Pick and Readonly before moving on.
+  </Accordion>
+  
+  <Accordion title="Learn the extends keyword">
+    `extends` is used for both constraints and conditionals. Understanding the difference is crucial:
+    ```typescript
+    // Constraint: T must be an array
+    type First<T extends any[]> = ...
+    
+    // Conditional: check if T is an array
+    type IsArray<T> = T extends any[] ? true : false
+    ```
+  </Accordion>
+  
+  <Accordion title="Practice with tuples">
+    Several challenges work with tuples. Remember that tuples are arrays with known lengths:
+    ```typescript
+    type Tuple = [string, number, boolean]
+    type Arr = string[] // not a tuple
+    ```
+  </Accordion>
+  
+  <Accordion title="Use the infer keyword">
+    When you need to extract a type, use `infer`:
+    ```typescript
+    type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never
+    ```
+  </Accordion>
+  
+  <Accordion title="Test your solutions">
+    Always check your solution against all test cases. Sometimes a solution works for simple cases but fails on edge cases.
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns You'll Use
+
+### Pattern 1: Property Selection
+
+```typescript
+type Pick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+```
+
+### Pattern 2: Property Modification
+
+```typescript
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K]
+}
+```
+
+### Pattern 3: Array Element Access
+
+```typescript
+type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never
+```
+
+### Pattern 4: Type Filtering
+
+```typescript
+type Exclude<T, U> = T extends U ? never : T
+```
+
+## Next Steps
+
+After completing easy challenges, you're ready for:
+
+<CardGroup cols={2}>
+  <Card title="Medium Challenges" icon="bolt" href="/challenges/medium" color="#d9901a">
+    103 challenges to build intermediate skills
+  </Card>
+  <Card title="TypeScript Handbook" icon="book" href="https://www.typescriptlang.org/docs/handbook/2/mapped-types.html">
+    Deep dive into mapped types
+  </Card>
+</CardGroup>

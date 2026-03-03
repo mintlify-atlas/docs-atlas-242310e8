@@ -1,0 +1,169 @@
+---
+title: Type Challenges Overview
+description: Learn how Type Challenges helps you master TypeScript's type system through hands-on practice
+---
+
+# Type Challenges Overview
+
+Type Challenges is a collection of TypeScript type exercises designed to help you master the TypeScript type system. Each challenge focuses on different aspects of type manipulation, from basic utility types to advanced type-level programming.
+
+## How It Works
+
+Type Challenges uses TypeScript's type system itself to validate your solutions. Instead of writing runtime code, you'll implement type utilities that satisfy test cases at compile time.
+
+### Challenge Structure
+
+Each challenge includes:
+
+- **Problem Description**: What you need to implement
+- **Starting Template**: Basic type definition to complete
+- **Test Cases**: Type assertions that must pass
+- **Examples**: Usage examples showing expected behavior
+
+### Example Challenge
+
+Here's what a typical challenge looks like:
+
+```typescript
+// Your implementation
+type MyPick<T, K> = any // Replace 'any' with your solution
+
+// Test cases (must have no type errors)
+type test = Expect<Equal<MyPick<Todo, 'title'>, { title: string }>>
+```
+
+## Difficulty Levels
+
+Challenges are organized into five difficulty tiers:
+
+<CardGroup cols={2}>
+  <Card title="Warm-up" icon="fire" color="#14b8a6">
+    **1 challenge** - Get started with the basics
+  </Card>
+  <Card title="Easy" icon="seedling" color="#7aad0c">
+    **13 challenges** - Learn fundamental type operations
+  </Card>
+  <Card title="Medium" icon="bolt" color="#d9901a">
+    **103 challenges** - Build intermediate skills
+  </Card>
+  <Card title="Hard" icon="mountain" color="#de3d37">
+    **56 challenges** - Master advanced concepts
+  </Card>
+  <Card title="Extreme" icon="skull" color="#b11b8d">
+    **17 challenges** - Push the limits of the type system
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+<Steps>
+  <Step title="Start with Warm-up">
+    Begin with the [Hello World](/challenges/warm-up) challenge to understand the format
+  </Step>
+  <Step title="Progress through Easy">
+    Work through [Easy challenges](/challenges/easy) to build foundational knowledge
+  </Step>
+  <Step title="Advance gradually">
+    Move to [Medium](/challenges/medium) and [Hard](/challenges/hard) as you gain confidence
+  </Step>
+  <Step title="Challenge yourself">
+    Tackle [Extreme challenges](/challenges/extreme) when you're ready for the ultimate test
+  </Step>
+</Steps>
+
+## Learning Path
+
+### Core Concepts You'll Learn
+
+- **Mapped Types**: Transform existing types into new ones
+- **Conditional Types**: Create types based on conditions
+- **Template Literal Types**: Manipulate string types
+- **Recursive Types**: Build complex types through recursion
+- **Union & Intersection**: Combine and intersect types
+- **Type Inference**: Extract and infer types from existing structures
+
+## Tips for Success
+
+<AccordionGroup>
+  <Accordion title="Read the TypeScript Handbook">
+    Understanding [TypeScript's type system fundamentals](https://www.typescriptlang.org/docs/handbook/2/types-from-types.html) is essential. Review sections on:
+    - Generics
+    - Conditional Types
+    - Mapped Types
+    - Template Literal Types
+  </Accordion>
+  
+  <Accordion title="Start Simple">
+    Don't skip difficulty levels. Each tier builds on concepts from previous ones. Master the basics before advancing.
+  </Accordion>
+  
+  <Accordion title="Use the Playground">
+    Test your solutions in the [TypeScript Playground](https://www.typescriptlang.org/play) to see how types behave and check for errors.
+  </Accordion>
+  
+  <Accordion title="Study Solutions">
+    After solving a challenge (or getting stuck), review community solutions to learn different approaches and best practices.
+  </Accordion>
+  
+  <Accordion title="Think in Types">
+    Remember you're working at compile-time, not runtime. Focus on type transformations rather than value operations.
+  </Accordion>
+</AccordionGroup>
+
+## Common Patterns
+
+As you progress, you'll encounter these recurring patterns:
+
+### Pattern Matching with Conditional Types
+
+```typescript
+type IsString<T> = T extends string ? true : false
+```
+
+### Mapping Over Object Keys
+
+```typescript
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K]
+}
+```
+
+### Type Inference with `infer`
+
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never
+```
+
+### Recursive Type Processing
+
+```typescript
+type DeepReadonly<T> = {
+  readonly [K in keyof T]: DeepReadonly<T[K]>
+}
+```
+
+## Resources
+
+<CardGroup cols={2}>
+  <Card title="TypeScript Playground" icon="code" href="https://www.typescriptlang.org/play">
+    Test your type solutions interactively
+  </Card>
+  <Card title="TypeScript Handbook" icon="book" href="https://www.typescriptlang.org/docs/handbook/intro.html">
+    Official TypeScript documentation
+  </Card>
+  <Card title="Type Challenges Repository" icon="github" href="https://github.com/type-challenges/type-challenges">
+    Original challenge repository and community solutions
+  </Card>
+  <Card title="Utility Types Reference" icon="wrench" href="https://www.typescriptlang.org/docs/handbook/utility-types.html">
+    Built-in TypeScript utility types
+  </Card>
+</CardGroup>
+
+## Next Steps
+
+Ready to begin? Start with the [Warm-up challenge](/challenges/warm-up) or jump directly to:
+
+- [Easy Challenges](/challenges/easy)
+- [Medium Challenges](/challenges/medium)
+- [Hard Challenges](/challenges/hard)
+- [Extreme Challenges](/challenges/extreme)

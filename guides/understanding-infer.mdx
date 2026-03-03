@@ -1,0 +1,258 @@
+---
+title: Understanding the infer Keyword
+description: Master TypeScript's infer keyword for extracting and inferring types within conditional types
+---
+
+The `infer` keyword is one of TypeScript's most powerful features for type-level programming. It allows you to extract and infer types from within conditional types, enabling complex type transformations that would otherwise be impossible.
+
+## What is infer?
+
+The `infer` keyword can only be used within the `extends` clause of a conditional type. It declares a type variable that TypeScript will automatically infer from the structure being matched.
+
+### Basic Syntax
+
+```typescript
+type ExtractType<T> = T extends SomePattern<infer U> ? U : never;
+```
+
+Here, `U` is a type variable that TypeScript will infer based on what matches the pattern.
+
+<Note>
+The `infer` keyword can only be used in the `extends` clause of a conditional type. You cannot use it in other contexts.
+</Note>
+
+## Extracting Return Types
+
+One of the most common uses of `infer` is extracting the return type of a function. This is exactly what the built-in `ReturnType<T>` utility does.
+
+### Challenge: Get Return Type
+
+From the ReturnType challenge, we need to extract the return type of a function:
+
+```typescript
+type MyReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+```
+
+**How it works:**
+1. `T extends (...args: any[]) => infer R` - Check if T is a function
+2. `infer R` - If it is, infer the return type as R
+3. `? R : never` - Return R if match succeeds, otherwise never
+
+**Examples:**
+
+```typescript
+const fn = (v: boolean) => v ? 1 : 2;
+
+type Result = MyReturnType<typeof fn>; // 1 | 2
+type StringFn = MyReturnType<() => string>; // string
+type ComplexFn = MyReturnType<() => Promise<boolean>>; // Promise<boolean>
+```
+
+<Tip>
+Notice how `infer R` captures whatever the function returns, whether it's a primitive, object, or even another function!
+</Tip>
+
+## Extracting Function Parameters
+
+Similarly, we can extract parameter types from functions using the Parameters challenge:
+
+```typescript
+type MyParameters<T extends (...args: any[]) => any> = 
+  T extends (...args: infer P) => any ? P : never;
+```
+
+**Key differences from ReturnType:**
+- `infer P` is placed in the parameters position
+- We constrain `T` to ensure it's a function
+- Returns a tuple type representing all parameters
+
+**Examples:**
+
+```typescript
+const foo = (arg1: string, arg2: number): void => {};
+
+type Params = MyParameters<typeof foo>; // [arg1: string, arg2: number]
+type NoParams = MyParameters<() => void>; // []
+```
+
+## Inferring from Tuples and Arrays
+
+The `infer` keyword becomes especially powerful when working with tuples and arrays. From the Tuple to Union challenge:
+
+```typescript
+type TupleToUnion<T extends readonly any[]> = T[number];
+
+// Alternative approach using infer:
+type TupleToUnion<T> = T extends Array<infer U> ? U : never;
+```
+
+**Examples:**
+
+```typescript
+type Arr = ['1', '2', '3'];
+type Union = TupleToUnion<Arr>; // '1' | '2' | '3'
+```
+
+### Extracting First Element
+
+```typescript
+type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never;
+
+type Result1 = First<[3, 2, 1]>; // 3
+type Result2 = First<[]>; // never
+```
+
+### Extracting Last Element
+
+```typescript
+type Last<T extends any[]> = T extends [...any[], infer L] ? L : never;
+
+type Result = Last<[1, 2, 3]>; // 3
+```
+
+<Tip>
+Rest elements (`...any[]`) can appear at the beginning or end, but not in the middle!
+</Tip>
+
+## Inferring from Promises
+
+Extracting the resolved type from a Promise is a common pattern:
+
+```typescript
+type Awaited<T> = T extends Promise<infer U> ? U : T;
+
+type StringPromise = Awaited<Promise<string>>; // string
+type AlreadyResolved = Awaited<number>; // number
+```
+
+For nested Promises, we need recursion:
+
+```typescript
+type DeepAwaited<T> = T extends Promise<infer U> 
+  ? DeepAwaited<U> 
+  : T;
+
+type Nested = DeepAwaited<Promise<Promise<string>>>; // string
+```
+
+## Multiple infer Declarations
+
+You can use multiple `infer` keywords in a single conditional type:
+
+```typescript
+type GetBoth<T> = T extends (first: infer F, second: infer S) => any 
+  ? [F, S] 
+  : never;
+
+type Both = GetBoth<(a: string, b: number) => void>; // [string, number]
+```
+
+### Union from Multiple Inferences
+
+When the same type variable is inferred in multiple positions, TypeScript creates a union:
+
+```typescript
+type GetArgs<T> = T extends {
+  a: (x: infer U) => void;
+  b: (x: infer U) => void;
+} ? U : never;
+
+type Args = GetArgs<{
+  a: (x: string) => void;
+  b: (x: number) => void;
+}>; // string | number
+```
+
+## Advanced Patterns
+
+### Inferring Object Property Types
+
+```typescript
+type GetProp<T, K extends keyof T> = T[K] extends infer V ? V : never;
+
+interface User {
+  name: string;
+  age: number;
+}
+
+type Name = GetProp<User, 'name'>; // string
+```
+
+### Inferring from Nested Structures
+
+```typescript
+type UnwrapArray<T> = T extends (infer U)[] 
+  ? U extends (infer V)[] 
+    ? V 
+    : U 
+  : T;
+
+type Flat = UnwrapArray<string[][]>; // string
+```
+
+### Pattern Matching with Template Literals
+
+```typescript
+type ExtractVersion<T> = T extends `v${infer Version}` ? Version : never;
+
+type V = ExtractVersion<'v1.0.0'>; // '1.0.0'
+type NoV = ExtractVersion<'1.0.0'>; // never
+```
+
+## Common Pitfalls
+
+### 1. Using infer Outside Conditional Types
+
+```typescript
+// ❌ Error: 'infer' declarations are only permitted in the 'extends' clause
+type Wrong<T> = infer U;
+
+// ✅ Correct
+type Right<T> = T extends infer U ? U : never;
+```
+
+### 2. Inferring Non-existent Patterns
+
+```typescript
+type Extract<T> = T extends { data: infer D } ? D : never;
+
+type Result = Extract<{ value: string }>; // never (no 'data' property)
+```
+
+<Note>
+If the pattern doesn't match, the false branch is taken. Always provide a meaningful fallback type.
+</Note>
+
+### 3. Over-constraining Types
+
+```typescript
+// Too restrictive - only accepts exact function signatures
+type Params<T extends () => void> = T extends (...args: infer P) => void ? P : never;
+
+// Better - accepts any function
+type BetterParams<T extends (...args: any[]) => any> = 
+  T extends (...args: infer P) => any ? P : never;
+```
+
+## Practice Challenges
+
+Now that you understand `infer`, try these challenges:
+
+1. **Get Return Type** (#2) - Extract function return types
+2. **Parameters** (#3312) - Extract function parameter types
+3. **Tuple to Union** (#10) - Convert tuple to union type
+4. **Promise.all** (#20) - Type the Promise.all function
+
+## Summary
+
+The `infer` keyword enables:
+- **Type extraction** from complex patterns
+- **Pattern matching** in conditional types
+- **Type transformation** based on structure
+- **Generic type manipulation** without explicit type parameters
+
+Mastering `infer` is essential for advanced TypeScript type programming. It's the foundation for many utility types and enables you to create flexible, reusable type utilities.
+
+<Tip>
+When learning `infer`, start simple (extracting return types) and gradually work toward more complex patterns (nested structures, multiple inferences). Practice is key!
+</Tip>

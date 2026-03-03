@@ -1,0 +1,201 @@
+---
+title: 'Equal and NotEqual'
+description: 'Deep type equality comparison utilities'
+---
+
+The Equal and NotEqual utilities provide precise type equality testing for TypeScript. Unlike TypeScript's built-in `extends` checks, these utilities perform deep, bidirectional equality comparisons.
+
+## Equal
+
+Perform a deep equality check between two types.
+
+### Type Signature
+
+```typescript
+export type Equal<X, Y> =
+  (<T>() => T extends X ? 1 : 2) extends
+  (<T>() => T extends Y ? 1 : 2) ? true : false
+```
+
+<ParamField path="X" type="any">
+  The first type to compare.
+</ParamField>
+
+<ParamField path="Y" type="any">
+  The second type to compare.
+</ParamField>
+
+### Purpose
+
+Tests whether two types are exactly equal, returning `true` if they are identical and `false` otherwise. This utility uses a clever trick with conditional types and generic functions to achieve precise equality checking that accounts for variance, modifiers, and structural differences.
+
+Unlike simple `extends` checks, `Equal` is:
+- **Bidirectional**: Both `X extends Y` and `Y extends X` must be true
+- **Exact**: Distinguishes between `any` and `unknown`, readonly and mutable, optional and required
+- **Variance-aware**: Correctly handles function parameter variance
+
+### Examples
+
+#### Basic Usage
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<string, string>>, // ✓ passes
+  Expect<Equal<number, string>>, // ✗ error: number is not equal to string
+]
+```
+
+#### Object Type Equality
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type MyOmit<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P]
+}
+
+type cases = [
+  Expect<Equal<
+    MyOmit<Todo, 'description'>,
+    { title: string; completed: boolean }
+  >>,
+  Expect<Equal<
+    MyOmit<Todo, 'description' | 'completed'>,
+    { title: string }
+  >>,
+]
+```
+
+#### Preserving Modifiers
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+interface Todo1 {
+  readonly title: string
+  description: string
+  completed: boolean
+}
+
+type cases = [
+  Expect<Equal<
+    MyOmit<Todo1, 'description' | 'completed'>,
+    { readonly title: string }
+  >>,
+]
+```
+
+#### Union Type Equality
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<'a' | 'b', 'a' | 'b'>>, // ✓ passes
+  Expect<Equal<'a' | 'b', 'b' | 'a'>>, // ✓ passes (order doesn't matter)
+  Expect<Equal<'a' | 'b', 'a'>>,       // ✗ error: not equal
+]
+```
+
+#### Intersection Type Equality
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<
+    UnionToIntersection<'foo' | 42 | true>,
+    'foo' & 42 & true
+  >>,
+  Expect<Equal<
+    UnionToIntersection<(() => 'foo') | ((i: 42) => true)>,
+    (() => 'foo') & ((i: 42) => true)
+  >>,
+]
+```
+
+---
+
+## NotEqual
+
+Inverse of Equal - assert two types are NOT equal.
+
+### Type Signature
+
+```typescript
+export type NotEqual<X, Y> = true extends Equal<X, Y> ? false : true
+```
+
+<ParamField path="X" type="any">
+  The first type to compare.
+</ParamField>
+
+<ParamField path="Y" type="any">
+  The second type to compare.
+</ParamField>
+
+### Purpose
+
+Returns `true` if the two types are NOT equal, `false` if they are equal. Useful for negative test cases where you want to ensure types are different.
+
+### Examples
+
+#### Basic Usage
+
+```typescript
+import type { NotEqual, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<NotEqual<string, number>>,  // ✓ passes
+  Expect<NotEqual<string, string>>,  // ✗ error: string equals string
+]
+```
+
+#### Testing Type Transformations
+
+```typescript
+import type { Equal, NotEqual, Expect } from '@type-challenges/utils'
+
+type Flip<T> = {
+  [K in keyof T as T[K] extends PropertyKey ? T[K] : never]: K
+}
+
+type cases = [
+  Expect<Equal<{ a: 'pi' }, Flip<{ pi: 'a' }>>>,
+  Expect<NotEqual<{ b: 'pi' }, Flip<{ pi: 'a' }>>>,
+  Expect<Equal<{ 3.14: 'pi', true: 'bool' }, Flip<{ pi: 3.14, bool: true }>>>,
+]
+```
+
+#### Combined with Other Utilities
+
+```typescript
+import type { ExpectTrue, NotAny, NotEqual } from '@type-challenges/utils'
+
+type MyType = SomeComplexType<T>
+
+// Ensure the type is defined and not just 'any' or equal to the input
+type validation = ExpectTrue<NotAny<MyType> | NotEqual<MyType, T>>
+```
+
+## Implementation Details
+
+The `Equal` implementation uses a technique based on conditional type distribution and generic function types:
+
+1. Creates two generic function types that conditionally return `1` or `2` based on whether `T` extends `X` or `Y`
+2. Compares these function types using `extends`
+3. Due to how TypeScript handles generic function type comparisons, this only returns `true` when `X` and `Y` are exactly the same type
+
+This approach correctly handles edge cases that simple bidirectional `extends` checks miss, such as:
+- `any` vs `unknown`
+- `readonly` modifiers
+- Optional vs required properties
+- Function parameter variance

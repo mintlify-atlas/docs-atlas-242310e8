@@ -1,0 +1,468 @@
+---
+title: Hard Challenges
+description: Master advanced TypeScript with 56 hard-level challenges covering complex type manipulations, parsers, and framework patterns
+---
+
+# Hard Challenges
+
+Hard challenges push your understanding of TypeScript's type system to advanced levels. You'll implement complex parsers, framework patterns, and sophisticated type transformations.
+
+<Warning>
+  **Total Challenges**: 56 | **Recommended for**: Advanced TypeScript developers with strong fundamentals
+</Warning>
+
+## Challenge Categories
+
+### Framework Patterns (5 challenges)
+<CardGroup cols={2}>
+  <Card title="#6 - Simple Vue" href="https://tsch.js.org/6/play">
+    Vue-like type inference
+  </Card>
+  <Card title="#213 - Vue Basic Props" href="https://tsch.js.org/213/play">
+    Vue props typing
+  </Card>
+  <Card title="#1290 - Pinia" href="https://tsch.js.org/1290/play">
+    State management typing
+  </Card>
+</CardGroup>
+
+### Type Parsers (8 challenges)
+<CardGroup cols={2}>
+  <Card title="#147 - C-printf Parser" href="https://tsch.js.org/147/play">
+    Parse printf format strings
+  </Card>
+  <Card title="#545 - printf" href="https://tsch.js.org/545/play">
+    Full printf implementation
+  </Card>
+  <Card title="#2822 - Split" href="https://tsch.js.org/2822/play">
+    String splitting at type level
+  </Card>
+</CardGroup>
+
+### Advanced String Manipulation (12 challenges)
+<CardGroup cols={2}>
+  <Card title="#114 - CamelCase" href="https://tsch.js.org/114/play">
+    Convert to camelCase
+  </Card>
+  <Card title="#112 - Capitalize Words" href="https://tsch.js.org/112/play">
+    Capitalize all words
+  </Card>
+  <Card title="#19458 - SnakeCase" href="https://tsch.js.org/19458/play">
+    Convert to snake_case
+  </Card>
+  <Card title="#1383 - Camelize" href="https://tsch.js.org/1383/play">
+    Deep object key camelization
+  </Card>
+</CardGroup>
+
+## All Hard Challenges
+
+<AccordionGroup>
+  <Accordion title="View Complete List (56 challenges)" icon="list">
+
+1. **#6** - Simple Vue
+2. **#17** - Currying 1
+3. **#55** - Union to Intersection
+4. **#57** - Get Required
+5. **#59** - Get Optional
+6. **#89** - Required Keys
+7. **#90** - Optional Keys
+8. **#112** - Capitalize Words
+9. **#114** - CamelCase
+10. **#147** - C-printf Parser
+11. **#213** - Vue Basic Props
+12. **#223** - IsAny
+13. **#270** - Typed Get
+14. **#300** - String to Number
+15. **#399** - Tuple Filter
+16. **#472** - Tuple to Enum Object
+17. **#545** - printf
+18. **#553** - Deep object to unique
+19. **#651** - Length of String 2
+20. **#730** - Union to Tuple
+21. **#847** - String Join
+22. **#956** - DeepPick
+23. **#1290** - Pinia
+24. **#1383** - Camelize
+25. **#2059** - Drop String
+26. **#2822** - Split
+27. **#2828** - ClassPublicKeys
+28. **#2857** - IsRequiredKey
+29. **#2949** - ObjectFromEntries
+30. **#3376** - InorderTraversal
+31. **#4037** - IsPalindrome
+32. **#5181** - Mutable Keys
+33. **#5423** - Intersection
+34. **#6141** - Binary to Decimal
+35. **#7258** - Object Key Paths
+36. **#8804** - Two Sum
+37. **#9155** - ValidDate
+38. **#9160** - Assign
+39. **#9384** - Maximum
+40. **#9775** - Capitalize Nest Object Keys
+41. **#13580** - Replace Union
+42. **#14080** - FizzBuzz
+43. **#14188** - Run-length encoding
+44. **#15260** - Tree path array
+45. **#19458** - SnakeCase
+46. **#25747** - IsNegativeNumber
+47. **#28143** - OptionalUndefined
+48. **#30178** - Unique Items
+49. **#30575** - BitwiseXOR
+50. **#31797** - Sudoku
+51. **#31824** - Length of String 3
+52. **#32427** - Unbox
+53. **#32532** - Binary Addition
+54. **#33763** - Union to Object from key
+55. **#34286** - Take Elements
+56. **#35314** - Valid Sudoku
+
+<Card title="Challenge yourself" icon="fire" href="https://tsch.js.org">
+  Open Type Challenges playground
+</Card>
+
+  </Accordion>
+</AccordionGroup>
+
+## Featured Challenges
+
+<AccordionGroup>
+  <Accordion title="#6 - Simple Vue" icon="vuejs">
+    
+### Description
+
+Implement a simplified version of Vue-like typing support. Provide proper type inference for `this` inside computed and methods.
+
+### Example
+
+```typescript
+const instance = SimpleVue({
+  data() {
+    return {
+      firstname: 'Type',
+      lastname: 'Challenges',
+      amount: 10,
+    }
+  },
+  computed: {
+    fullname() {
+      return this.firstname + ' ' + this.lastname
+    }
+  },
+  methods: {
+    hi() {
+      alert(this.fullname.toLowerCase())
+    }
+  }
+})
+```
+
+### Key Concepts
+- `this` type inference
+- Multiple context merging
+- Computed vs method return types
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/6/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#17 - Currying 1" icon="function">
+    
+### Description
+
+Implement the type for a curried function. The function should accept arguments one at a time and return another function until all arguments are provided.
+
+### Example
+
+```typescript
+const add = (a: number) => (b: number) => (c: number) => a + b + c
+const three = add(1)(2)(3) // 6
+
+type Curried = Currying<typeof add>
+// (a: number) => (b: number) => (c: number) => number
+```
+
+### Key Concepts
+- Function type inference
+- Recursive function types
+- Parameter extraction
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/17/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#55 - Union to Intersection" icon="circle-nodes">
+    
+### Description
+
+Implement a type that converts a union type to an intersection type.
+
+### Example
+
+```typescript
+type Union = { a: string } | { b: number }
+type Intersection = UnionToIntersection<Union>
+// Result: { a: string } & { b: number }
+```
+
+### Key Concepts
+- Contravariance in function parameters
+- Inference from function types
+- Advanced type manipulation
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/55/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#114 - CamelCase" icon="text">
+    
+### Description
+
+Implement `CamelCase<T>` that converts a string from kebab-case or snake_case to camelCase.
+
+### Example
+
+```typescript
+type camelCase1 = CamelCase<'hello-world-foo-bar'> // 'helloWorldFooBar'
+type camelCase2 = CamelCase<'user_id'> // 'userId'
+```
+
+### Key Concepts
+- Complex template literal parsing
+- Character-by-character processing
+- State tracking in types
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/114/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#300 - String to Number" icon="hashtag">
+    
+### Description
+
+Convert a string literal type to a number type.
+
+### Example
+
+```typescript
+type Result1 = ToNumber<'42'> // 42
+type Result2 = ToNumber<'0'> // 0
+type Result3 = ToNumber<'123'> // 123
+```
+
+### Key Concepts
+- Type-level string parsing
+- Accumulator pattern with tuples
+- Digit-by-digit processing
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/300/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#730 - Union to Tuple" icon="list">
+    
+### Description
+
+Convert a union type into a tuple type maintaining all members.
+
+### Example
+
+```typescript
+type Union = 'a' | 'b' | 'c'
+type Result = UnionToTuple<Union>
+// ['a', 'b', 'c'] (order may vary)
+```
+
+### Key Concepts
+- Union manipulation
+- Tuple accumulation
+- Advanced inference techniques
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/730/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+</AccordionGroup>
+
+## Advanced Patterns
+
+### 1. Contravariant Inference
+
+Use function parameter contravariance for type transformations:
+
+```typescript
+type UnionToIntersection<U> = (
+  U extends any ? (x: U) => void : never
+) extends (x: infer I) => void
+  ? I
+  : never
+```
+
+### 2. Complex String Parsing
+
+Build state machines in the type system:
+
+```typescript
+type CamelCase<S extends string> = S extends `${infer Head}-${infer Tail}`
+  ? `${Head}${CamelCase<Capitalize<Tail>>}`
+  : S extends `${infer Head}_${infer Tail}`
+  ? `${Head}${CamelCase<Capitalize<Tail>>}`
+  : S
+```
+
+### 3. Type-Level Arithmetic
+
+Implement mathematical operations:
+
+```typescript
+type StringToNumber<S extends string, Acc extends any[] = []> = 
+  S extends `${Acc['length']}`
+    ? Acc['length']
+    : StringToNumber<S, [...Acc, any]>
+```
+
+### 4. Deep Object Transformation
+
+Recursively transform nested structures:
+
+```typescript
+type Camelize<T> = T extends any[]
+  ? T
+  : T extends object
+  ? { [K in keyof T as CamelCase<K & string>]: Camelize<T[K]> }
+  : T
+```
+
+### 5. Framework Type Patterns
+
+Merge multiple type contexts:
+
+```typescript
+type SimpleVue<D, C, M> = {
+  data(): D
+  computed: C & ThisType<D>
+  methods: M & ThisType<D & MapComputed<C> & M>
+}
+```
+
+## Tips for Hard Challenges
+
+<AccordionGroup>
+  <Accordion title="Study TypeScript's variance">
+    Understanding variance (especially contravariance) is crucial:
+    ```typescript
+    // Functions are contravariant in their parameter types
+    type Contra<T> = (x: T) => void
+    // This property is used in UnionToIntersection
+    ```
+  </Accordion>
+  
+  <Accordion title="Break down complex problems">
+    Hard challenges often require multiple helper types:
+    ```typescript
+    // Main type
+    type CamelCase<S> = ...
+    
+    // Helpers
+    type IsLowerCase<S> = ...
+    type CapitalizeAfterDelimiter<S> = ...
+    type RemoveDelimiters<S> = ...
+    ```
+  </Accordion>
+  
+  <Accordion title="Use ThisType for context inference">
+    Framework patterns often need `ThisType`:
+    ```typescript
+    type Methods<T> = {
+      [K: string]: (this: T, ...args: any[]) => any
+    } & ThisType<T>
+    ```
+  </Accordion>
+  
+  <Accordion title="Test incrementally">
+    Build your solution step by step:
+    1. Handle the simplest case
+    2. Add one feature at a time
+    3. Test each addition
+    4. Refactor for edge cases
+  </Accordion>
+  
+  <Accordion title="Study existing utility types">
+    TypeScript's built-in utilities use these patterns:
+    ```typescript
+    // Study how these work
+    type ReturnType<T> = ...
+    type Parameters<T> = ...
+    type ConstructorParameters<T> = ...
+    ```
+  </Accordion>
+  
+  <Accordion title="Understand type distribution">
+    Control when unions distribute:
+    ```typescript
+    // Distributes
+    type Dist<T> = T extends any ? [T] : never
+    
+    // Doesn't distribute
+    type NoDist<T> = [T] extends [any] ? [T] : never
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Common Pitfalls
+
+<Warning>
+  **Infinite Type Instantiation**: Recursive types without proper base cases can cause TypeScript to error. Always ensure recursion terminates.
+</Warning>
+
+<Warning>
+  **Type Depth Limits**: TypeScript has a maximum type instantiation depth. Very deep recursion may hit this limit.
+</Warning>
+
+<Warning>
+  **Union Ordering**: Union to Tuple conversions may produce different orders in different TypeScript versions.
+</Warning>
+
+## Learning Path
+
+<Steps>
+  <Step title="Master Inference (17, 55, 270)">
+    Start with advanced inference patterns
+  </Step>
+  <Step title="Object Key Utilities (57, 59, 89, 90)">
+    Learn to extract and analyze object keys
+  </Step>
+  <Step title="String Parsers (114, 147, 300)">
+    Build complex string manipulation types
+  </Step>
+  <Step title="Framework Patterns (6, 213, 1290)">
+    Tackle real-world framework typing
+  </Step>
+  <Step title="Advanced Algorithms (730, 4037, 8804)">
+    Implement sophisticated type-level algorithms
+  </Step>
+</Steps>
+
+## Next Steps
+
+Ready for the ultimate challenge?
+
+<CardGroup cols={2}>
+  <Card title="Extreme Challenges" icon="skull" href="/challenges/extreme" color="#b11b8d">
+    17 challenges that push TypeScript to its limits
+  </Card>
+  <Card title="Advanced Types" icon="book" href="https://www.typescriptlang.org/docs/handbook/2/types-from-types.html">
+    TypeScript handbook on advanced types
+  </Card>
+</CardGroup>

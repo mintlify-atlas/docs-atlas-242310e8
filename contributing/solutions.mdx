@@ -1,0 +1,279 @@
+---
+title: Sharing Solutions
+description: How to share your solutions and learn from others in the Type Challenges community
+---
+
+Completed a challenge? Share your solution with the community! Your approach can help others learn different problem-solving techniques.
+
+## Why Share Solutions?
+
+- **Help Others Learn** - Your approach might be clearer or more elegant than others
+- **Get Feedback** - Learn alternative approaches and improve your skills
+- **Build Your Profile** - Showcase your TypeScript expertise
+- **Contribute to Learning** - Be part of the community knowledge base
+
+## How to Share Your Solution
+
+<Steps>
+  <Step title="Search for Existing Solutions">
+    Before posting, search for similar solutions that may already be shared for your challenge.
+
+    You can:
+    - Browse existing issues with the `answer` label
+    - Use GitHub search: `is:issue label:answer "challenge-number"`
+    - Check the challenge's solutions page at `https://tsch.js.org/[number]/solutions`
+
+    If you find a similar solution:
+    - Give it a thumbs up 👍
+    - Add your thoughts in the comments
+    - Share variations or improvements
+  </Step>
+
+  <Step title="Open an Answer Issue">
+    If your solution offers something unique, create a new issue:
+
+    1. Go to [New Issue](https://github.com/type-challenges/type-challenges/issues/new/choose)
+    2. Select the "Answers" template
+    3. Use the title format: `[challenge-number] - [Challenge Name]`
+       
+       Example: `4 - Pick` or `189 - Awaited`
+  </Step>
+
+  <Step title="Write Your Solution">
+    Share your solution with the community. Include:
+
+    **Your Code:**
+    ```ts
+    type MyPick<T, K extends keyof T> = {
+      [P in K]: T[P]
+    }
+    ```
+
+    **Optional but Helpful:**
+    - **Explanation** - How does your solution work?
+    - **Key Concepts** - What TypeScript features did you use?
+    - **Tradeoffs** - Are there limitations or edge cases?
+    - **Learning Points** - What did you learn solving this?
+  </Step>
+
+  <Step title="Engage with the Community">
+    After posting:
+    - Respond to comments and questions
+    - Consider feedback and alternative approaches
+    - Update your solution if you find improvements
+    - Help others understand your reasoning
+  </Step>
+</Steps>
+
+## Solution Template
+
+Here's a good template for sharing solutions:
+
+```markdown
+## Solution
+
+```ts
+// Your solution code
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+```
+
+## Explanation
+
+[Explain how your solution works]
+
+**Key concepts:**
+- `K extends keyof T` - Constrains K to be keys of T
+- `[P in K]` - Mapped type iterating over K
+- `T[P]` - Index access to get property type
+
+## Why This Works
+
+[Explain the reasoning behind your approach]
+
+## Alternative Approaches
+
+[Optional: mention other ways to solve this]
+```
+
+## Example: Good Solution Post
+
+Here's an example of a well-structured solution:
+
+---
+
+**Title:** `4 - Pick`
+
+**Body:**
+
+```ts
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+```
+
+### Explanation
+
+This solution uses TypeScript's mapped types to create a new type by iterating over the keys in `K` and picking the corresponding properties from `T`.
+
+**How it works:**
+
+1. `K extends keyof T` - This constraint ensures that K can only contain keys that exist in T. This gives us type safety and prevents picking non-existent properties.
+
+2. `[P in K]` - This is a mapped type that iterates over each key in the union K, binding each key to the variable P.
+
+3. `T[P]` - For each key P, we access the corresponding property type from T using indexed access.
+
+**Key TypeScript features used:**
+- Generic type parameters (`<T, K>`)
+- Generic constraints (`extends keyof T`)
+- Mapped types (`[P in K]`)
+- Indexed access types (`T[P]`)
+
+### What I Learned
+
+This challenge taught me how to properly constrain generic type parameters. My first attempt didn't include `extends keyof T` and the test cases failed because TypeScript allowed picking invalid keys!
+
+---
+
+## Best Practices
+
+<Tip>
+**Explain Your Thinking**
+
+Don't just post code - explain why you made certain decisions. This helps others understand the problem-solving process.
+</Tip>
+
+<Tip>
+**Use Clear Formatting**
+
+Use code blocks with syntax highlighting, headers, and lists to make your solution easy to read.
+</Tip>
+
+<Tip>
+**Be Open to Feedback**
+
+Someone might suggest a simpler approach or point out edge cases. This is a learning opportunity!
+</Tip>
+
+<Tip>
+**Search First**
+
+Before posting, check if someone already shared a similar solution. You can add to their discussion instead.
+</Tip>
+
+## Common Solution Patterns
+
+As you solve challenges, you'll encounter these common TypeScript patterns:
+
+### Mapped Types
+
+```ts
+type MyReadonly<T> = {
+  readonly [P in keyof T]: T[P]
+}
+```
+
+Used for transforming object types.
+
+### Conditional Types
+
+```ts
+type MyExclude<T, U> = T extends U ? never : T
+```
+
+Used for filtering types based on conditions.
+
+### Template Literal Types
+
+```ts
+type Capitalize<S extends string> = S extends `${infer F}${infer R}`
+  ? `${Uppercase<F>}${R}`
+  : S
+```
+
+Used for string manipulation at the type level.
+
+### Recursive Types
+
+```ts
+type DeepReadonly<T> = {
+  readonly [P in keyof T]: T[P] extends object
+    ? DeepReadonly<T[P]>
+    : T[P]
+}
+```
+
+Used for deeply nested type transformations.
+
+### Tuple Manipulation
+
+```ts
+type First<T extends any[]> = T extends [infer F, ...any[]]
+  ? F
+  : never
+```
+
+Used for array and tuple operations.
+
+## Learning from Solutions
+
+When reviewing others' solutions:
+
+<Steps>
+  <Step title="Try to Understand">
+    Don't just copy - understand why it works. Trace through the type transformations.
+  </Step>
+
+  <Step title="Compare Approaches">
+    Look at multiple solutions. Different approaches teach different concepts.
+  </Step>
+
+  <Step title="Test Variations">
+    Try modifying the solution to understand its boundaries and limitations.
+  </Step>
+
+  <Step title="Ask Questions">
+    If something is unclear, ask! The community is here to help.
+  </Step>
+</Steps>
+
+## Solution Resources
+
+Explore these resources for more solutions and explanations:
+
+- **[Official Solutions Page](https://tsch.js.org)** - Browse solutions for each challenge
+- **[Video Explanations](https://www.youtube.com/playlist?list=PLOlZuxYbPik180vcJfsAM6xHYLVxrEgHC)** - Watch detailed walkthroughs
+- **[ghaiklor's Solutions](https://github.com/ghaiklor/type-challenges-solutions)** - Comprehensive solution repository
+- **[Type Gymnastics](https://github.com/g-plane/type-gymnastics)** - Alternative solutions and approaches
+
+<Note>
+Remember: There's rarely one "correct" solution. Different approaches can teach different concepts. Share yours!
+</Note>
+
+## Community Guidelines
+
+When sharing solutions:
+
+- **Be respectful** - Everyone is at a different learning stage
+- **Give credit** - If your solution builds on someone else's idea, mention them
+- **Stay constructive** - Critique ideas, not people
+- **Help others** - Answer questions about your solution
+- **Keep learning** - Be open to better approaches
+
+## Getting Help
+
+Stuck on a challenge? Here's how to get help:
+
+1. **Read the challenge carefully** - Make sure you understand what's being asked
+2. **Check existing solutions** - See how others approached it
+3. **Ask in Discord** - The [Type Challenges Discord](https://discord.gg/UgKBCq9) is very active
+4. **Open a help issue** - Use the "Help" issue template
+5. **Review TypeScript docs** - Often the answer is in the [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
+
+<Warning>
+When asking for help, show what you've tried! It helps others understand where you're stuck and provide better guidance.
+</Warning>
+
+Happy solving! 🚀

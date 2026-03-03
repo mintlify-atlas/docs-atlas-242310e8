@@ -1,0 +1,315 @@
+---
+title: 'Alike and Type Utilities'
+description: 'Structural comparison and advanced type utilities'
+---
+
+These utilities provide structural type comparison, type detection, and type transformation helpers for advanced type testing scenarios.
+
+## Alike
+
+Structural equality comparison with merged intersections.
+
+### Type Signature
+
+```typescript
+export type Alike<X, Y> = Equal<MergeInsertions<X>, MergeInsertions<Y>>
+```
+
+<ParamField path="X" type="any">
+  The first type to compare.
+</ParamField>
+
+<ParamField path="Y" type="any">
+  The second type to compare.
+</ParamField>
+
+### Purpose
+
+Compares two types for structural equality after merging any intersection types. This is useful when comparing types that may have different intersection structures but are semantically equivalent.
+
+Unlike `Equal`, which requires exact type equality, `Alike` normalizes types by merging intersections before comparison. This makes it ideal for testing mapped types and object manipulations where the result may have intersections.
+
+### Examples
+
+#### Basic Usage
+
+```typescript
+import type { Alike, Expect } from '@type-challenges/utils'
+
+interface Todo1 {
+  title: string
+  description?: string
+  completed: boolean
+}
+
+interface Todo2 {
+  readonly title: string
+  description?: string
+  completed: boolean
+}
+
+type MyReadonly2<T, K extends keyof T = keyof T> = {
+  readonly [P in K]: T[P]
+} & {
+  [P in Exclude<keyof T, K>]: T[P]
+}
+
+type cases = [
+  Expect<Alike<MyReadonly2<Todo1>, Readonly<Todo1>>>,
+  Expect<Alike<
+    MyReadonly2<Todo1, 'title' | 'description'>,
+    { readonly title: string; readonly description?: string; completed: boolean }
+  >>,
+]
+```
+
+In this example, `MyReadonly2` produces an intersection type, but `Alike` correctly compares it to the expected flattened structure.
+
+#### Handling Intersection Types
+
+```typescript
+import type { Alike, Expect } from '@type-challenges/utils'
+
+interface Expected {
+  readonly title: string
+  readonly description?: string
+  completed: boolean
+}
+
+type cases = [
+  Expect<Alike<MyReadonly2<Todo2, 'title' | 'description'>, Expected>>,
+  Expect<Alike<MyReadonly2<Todo2, 'description'>, Expected>>,
+]
+```
+
+---
+
+## MergeInsertions
+
+Recursively merge intersection types into unified object types.
+
+### Type Signature
+
+```typescript
+export type MergeInsertions<T> =
+  T extends object
+    ? { [K in keyof T]: MergeInsertions<T[K]> }
+    : T
+```
+
+<ParamField path="T" type="any">
+  The type to merge. If it's an object, all nested objects are recursively merged.
+</ParamField>
+
+### Purpose
+
+Recursively transforms intersection types like `{ a: string } & { b: number }` into unified object types like `{ a: string; b: number }`. This normalization is essential for structural comparison and improving type readability.
+
+### Examples
+
+```typescript
+import type { MergeInsertions, Equal, Expect } from '@type-challenges/utils'
+
+type Intersection = { a: string } & { b: number }
+type Merged = MergeInsertions<Intersection>
+// Result: { a: string; b: number }
+
+type cases = [
+  Expect<Equal<Merged, { a: string; b: number }>>,
+]
+```
+
+---
+
+## Debug
+
+Expand a type for better readability in IDE tooltips.
+
+### Type Signature
+
+```typescript
+export type Debug<T> = { [K in keyof T]: T[K] }
+```
+
+<ParamField path="T" type="object">
+  The type to expand and debug.
+</ParamField>
+
+### Purpose
+
+Forces TypeScript to expand a type's definition, making it easier to read in IDE tooltips and error messages. This is purely a development aid and doesn't change the type's behavior.
+
+### Examples
+
+```typescript
+import type { Debug } from '@type-challenges/utils'
+
+type MyComplexType = Pick<Something, 'a' | 'b'> & Omit<Other, 'c'>
+
+// Hard to read in tooltips:
+type Before = MyComplexType
+
+// Expanded and readable:
+type After = Debug<MyComplexType>
+```
+
+---
+
+## IsAny
+
+Detect if a type is `any`.
+
+### Type Signature
+
+```typescript
+// https://stackoverflow.com/questions/49927523/disallow-call-with-any/49928360#49928360
+export type IsAny<T> = 0 extends (1 & T) ? true : false
+```
+
+<ParamField path="T" type="any">
+  The type to check.
+</ParamField>
+
+### Purpose
+
+Returns `true` if the type is `any`, `false` otherwise. This uses a clever intersection trick: `any` is the only type where `1 & T` produces a type that `0` can extend.
+
+### Examples
+
+```typescript
+import type { IsAny, Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<IsAny<any>, true>>,
+  Expect<Equal<IsAny<undefined>, false>>,
+  Expect<Equal<IsAny<unknown>, false>>,
+  Expect<Equal<IsAny<never>, false>>,
+  Expect<Equal<IsAny<string>, false>>,
+]
+```
+
+#### Practical Usage
+
+```typescript
+import type { IsAny, Expect } from '@type-challenges/utils'
+
+declare const result: PropsType['propA']
+
+type cases = [
+  Expect<IsAny<typeof result>>,
+]
+```
+
+---
+
+## NotAny
+
+Inverse of IsAny - assert a type is NOT `any`.
+
+### Type Signature
+
+```typescript
+export type NotAny<T> = true extends IsAny<T> ? false : true
+```
+
+<ParamField path="T" type="any">
+  The type to check.
+</ParamField>
+
+### Purpose
+
+Returns `true` if the type is NOT `any`, `false` if it is `any`. Useful for ensuring type implementations don't collapse to `any`.
+
+### Examples
+
+```typescript
+import type { NotAny, Expect } from '@type-challenges/utils'
+
+type HelloWorld = string
+
+type cases = [
+  Expect<NotAny<HelloWorld>>,
+]
+```
+
+#### Combined Validation
+
+```typescript
+import type { ExpectTrue, NotAny, NotEqual } from '@type-challenges/utils'
+
+type MyType = ComplexTypeTransformation<T>
+
+// Ensure result is not 'any' and is different from input
+type validation = ExpectTrue<NotAny<MyType> | NotEqual<MyType, T>>
+```
+
+---
+
+## UnionToIntersection
+
+Convert a union type to an intersection type.
+
+### Type Signature
+
+```typescript
+export type UnionToIntersection<U> = 
+  (U extends any ? (k: U) => void : never) extends (k: infer I) => void 
+    ? I 
+    : never
+```
+
+<ParamField path="U" type="any">
+  The union type to convert to an intersection.
+</ParamField>
+
+### Purpose
+
+Transforms a union type into an intersection type. This uses contravariant position inference in function parameters to collect all union members into an intersection.
+
+The transformation works by:
+1. Distributing the union into function types in contravariant position
+2. Using conditional type inference to extract the intersection
+3. Leveraging TypeScript's inference of intersection types for contravariant positions
+
+### Examples
+
+#### Basic Union to Intersection
+
+```typescript
+import type { UnionToIntersection, Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<
+    UnionToIntersection<'foo' | 42 | true>,
+    'foo' & 42 & true
+  >>,
+]
+```
+
+#### Function Union to Intersection
+
+```typescript
+import type { UnionToIntersection, Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<
+    UnionToIntersection<(() => 'foo') | ((i: 42) => true)>,
+    (() => 'foo') & ((i: 42) => true)
+  >>,
+]
+```
+
+#### Practical Application
+
+```typescript
+import type { UnionToIntersection } from '@type-challenges/utils'
+
+type UnionOfObjects = 
+  | { a: string }
+  | { b: number }
+  | { c: boolean }
+
+type Combined = UnionToIntersection<UnionOfObjects>
+// Result: { a: string } & { b: number } & { c: boolean }
+// Which TypeScript treats as: { a: string; b: number; c: boolean }
+```

@@ -1,0 +1,160 @@
+---
+title: Warm-up Challenges
+description: Get started with Type Challenges through the Hello World warm-up exercise
+---
+
+# Warm-up Challenges
+
+The warm-up challenge introduces you to how Type Challenges work. You'll learn the basic format and testing approach used throughout all challenges.
+
+<Note>
+  This is the perfect starting point if you're new to Type Challenges. It explains the testing methodology and gets you comfortable with the format.
+</Note>
+
+## Challenge List
+
+<CardGroup cols={1}>
+  <Card title="#13 - Hello World" icon="hand-wave" href="https://tsch.js.org/13/play">
+    Your first Type Challenge - learn how the testing system works
+  </Card>
+</CardGroup>
+
+## Challenge: Hello World
+
+<Accordion title="#13 - Hello World" defaultOpen>
+
+### Description
+
+In Type Challenges, we use the type system itself to do the assertion. For this challenge, you will need to change the following code to make the tests pass (no type check errors).
+
+### Starting Code
+
+```typescript
+// expected to be string
+type HelloWorld = any
+```
+
+### Test Cases
+
+```typescript
+// you should make this work
+type test = Expect<Equal<HelloWorld, string>>
+```
+
+### Expected Solution
+
+Replace `any` with the correct type to make `HelloWorld` equal to `string`.
+
+### What You'll Learn
+
+- How Type Challenges uses compile-time assertions
+- The `Expect` and `Equal` testing utilities
+- Basic type assignment in TypeScript
+
+### Try It Yourself
+
+<Card title="Take the Challenge" icon="rocket" href="https://tsch.js.org/13/play">
+  Open this challenge in the TypeScript Playground
+</Card>
+
+</Accordion>
+
+## Understanding the Test System
+
+Type Challenges uses a unique testing approach:
+
+### How Tests Work
+
+```typescript
+type Expect<T extends true> = T
+type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends
+  (<T>() => T extends Y ? 1 : 2) ? true : false
+```
+
+These utility types check if your solution matches the expected type:
+
+- **`Equal<X, Y>`**: Returns `true` if types X and Y are identical, `false` otherwise
+- **`Expect<T>`**: Only accepts `true`, causing a type error if the test fails
+
+### Example Test
+
+```typescript
+// This passes - no type error
+type test1 = Expect<Equal<string, string>>
+
+// This fails - type error!
+type test2 = Expect<Equal<string, number>>
+```
+
+## Tips for Warm-up
+
+<AccordionGroup>
+  <Accordion title="Don't overthink it">
+    The Hello World challenge is intentionally simple. The goal is to understand the testing format, not to solve a complex problem.
+  </Accordion>
+  
+  <Accordion title="Read the test cases carefully">
+    The test cases tell you exactly what type your solution should produce. In this case, `HelloWorld` must equal `string`.
+  </Accordion>
+  
+  <Accordion title="Use the TypeScript Playground">
+    Click "Take the Challenge" to open the problem in the TypeScript Playground where you can test your solution interactively.
+  </Accordion>
+  
+  <Accordion title="Check for type errors">
+    Your solution is correct when there are no red underlines or type errors in the editor.
+  </Accordion>
+</AccordionGroup>
+
+## Key Concepts
+
+### Type Aliases
+
+Type aliases let you create named types:
+
+```typescript
+type MyString = string
+type MyNumber = number
+type MyObject = { name: string; age: number }
+```
+
+### Type Equality
+
+In TypeScript, these are equivalent:
+
+```typescript
+type A = string
+type B = string
+// A and B are the same type
+```
+
+### Why Not `any`?
+
+The `any` type opts out of type checking:
+
+```typescript
+type HelloWorld = any
+// any is compatible with everything, but provides no type safety
+
+type HelloWorld = string
+// string is specific and type-safe
+```
+
+## Next Steps
+
+Once you've completed the warm-up, you're ready to move on to:
+
+<CardGroup cols={2}>
+  <Card title="Easy Challenges" icon="seedling" href="/challenges/easy" color="#7aad0c">
+    13 challenges covering fundamental type operations
+  </Card>
+  <Card title="Back to Overview" icon="arrow-left" href="/challenges/overview">
+    Review the challenge system overview
+  </Card>
+</CardGroup>
+
+## Additional Resources
+
+<Card title="TypeScript Basics" icon="book" href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html">
+  Learn about everyday types in TypeScript
+</Card>

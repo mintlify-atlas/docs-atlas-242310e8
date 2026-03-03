@@ -1,0 +1,408 @@
+---
+title: Key Remapping in Mapped Types
+description: Learn how to transform object keys using TypeScript's key remapping feature in mapped types
+---
+
+Key remapping in mapped types is a powerful TypeScript feature that allows you to transform object keys while creating new types. Introduced in TypeScript 4.1, the `as` clause lets you rename, filter, and transform keys in sophisticated ways.
+
+## What is Key Remapping?
+
+Key remapping uses the `as` clause within mapped types to change how keys are mapped from the source type to the target type.
+
+### Basic Syntax
+
+```typescript
+type MappedType<T> = {
+  [K in keyof T as NewKeyType]: T[K]
+}
+```
+
+The `as NewKeyType` clause transforms each key `K` before it's used in the new type.
+
+<Note>
+Without the `as` clause, mapped types simply iterate over keys. With `as`, you can transform, filter, or completely change the key structure.
+</Note>
+
+## Understanding Mapped Types First
+
+Before diving into key remapping, let's understand basic mapped types:
+
+```typescript
+// Basic mapped type - no transformation
+type Readonly<T> = {
+  readonly [K in keyof T]: T[K]
+}
+
+interface User {
+  name: string;
+  age: number;
+}
+
+type ReadonlyUser = Readonly<User>;
+// { readonly name: string; readonly age: number; }
+```
+
+Here, `K in keyof T` iterates over each key, but the keys remain unchanged.
+
+## Simple Key Transformations
+
+### Capitalizing Keys
+
+From the Capitalize Nest Object Keys challenge, we can transform keys to uppercase:
+
+```typescript
+type CapitalizeKeys<T> = {
+  [K in keyof T as Capitalize<K & string>]: T[K]
+}
+
+type User = {
+  name: string;
+  age: number;
+}
+
+type CapitalizedUser = CapitalizeKeys<User>;
+// { Name: string; Age: number; }
+```
+
+**How it works:**
+1. `K in keyof T` - Iterate over each key
+2. `as Capitalize<K & string>` - Transform key to capitalized version
+3. `K & string` - Ensure K is treated as a string (not symbol or number)
+
+<Tip>
+The `& string` intersection is necessary because `keyof T` can include string, number, and symbol types. Most string manipulation utilities only work with strings.
+</Tip>
+
+### Adding Prefixes or Suffixes
+
+```typescript
+type Getters<T> = {
+  [K in keyof T as `get${Capitalize<K & string>}`]: () => T[K]
+}
+
+type User = {
+  name: string;
+  age: number;
+}
+
+type UserGetters = Getters<User>;
+// {
+//   getName: () => string;
+//   getAge: () => number;
+// }
+```
+
+## Filtering Keys with never
+
+Key remapping can filter out keys by mapping them to `never`:
+
+```typescript
+type RemoveId<T> = {
+  [K in keyof T as K extends 'id' ? never : K]: T[K]
+}
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+}
+
+type UserWithoutId = RemoveId<User>;
+// { name: string; email: string; }
+```
+
+**How it works:**
+- If key is `'id'`, map it to `never` (effectively removing it)
+- Otherwise, keep the original key `K`
+
+### Removing All Methods
+
+```typescript
+type RemoveMethods<T> = {
+  [K in keyof T as T[K] extends Function ? never : K]: T[K]
+}
+
+type Mixed = {
+  name: string;
+  age: number;
+  getName: () => string;
+  setAge: (age: number) => void;
+}
+
+type DataOnly = RemoveMethods<Mixed>;
+// { name: string; age: number; }
+```
+
+## Conditional Key Transformation
+
+Combine conditional types with key remapping for sophisticated transformations:
+
+```typescript
+type StringKeysOnly<T> = {
+  [K in keyof T as T[K] extends string ? K : never]: T[K]
+}
+
+type Mixed = {
+  name: string;
+  age: number;
+  email: string;
+  active: boolean;
+}
+
+type OnlyStrings = StringKeysOnly<Mixed>;
+// { name: string; email: string; }
+```
+
+### Creating Optional Keys Conditionally
+
+```typescript
+type PartialBy<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P]
+} & {
+  [P in K]?: T[P]
+}
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+}
+
+type UserWithOptionalEmail = PartialBy<User, 'email'>;
+// { id: number; name: string; email?: string; }
+```
+
+## Template Literal Types in Key Remapping
+
+Template literal types unlock powerful key transformation patterns:
+
+### Creating Event Handlers
+
+```typescript
+type Events<T> = {
+  [K in keyof T as `on${Capitalize<K & string>}Change`]: (value: T[K]) => void
+}
+
+type FormFields = {
+  username: string;
+  password: string;
+  remember: boolean;
+}
+
+type FormEvents = Events<FormFields>;
+// {
+//   onUsernameChange: (value: string) => void;
+//   onPasswordChange: (value: string) => void;
+//   onRememberChange: (value: boolean) => void;
+// }
+```
+
+### Extracting Pattern-Matching Keys
+
+```typescript
+type ExtractGetters<T> = {
+  [K in keyof T as K extends `get${infer _}` ? K : never]: T[K]
+}
+
+type API = {
+  getData: () => string;
+  getUser: () => object;
+  setData: (data: string) => void;
+  deleteUser: () => void;
+}
+
+type OnlyGetters = ExtractGetters<API>;
+// { getData: () => string; getUser: () => object; }
+```
+
+<Tip>
+Combining template literal types with key remapping lets you extract, transform, and create new keys based on naming patterns!
+</Tip>
+
+## Recursive Key Transformation
+
+Key remapping can be combined with recursion for nested transformations:
+
+```typescript
+type DeepCapitalize<T> = {
+  [K in keyof T as Capitalize<K & string>]: T[K] extends object
+    ? T[K] extends any[]
+      ? T[K] extends Array<infer U>
+        ? U extends object
+          ? Array<DeepCapitalize<U>>
+          : T[K]
+        : T[K]
+      : DeepCapitalize<T[K]>
+    : T[K]
+}
+
+type nested = {
+  user: {
+    name: string;
+    settings: {
+      theme: string;
+    }
+  }
+}
+
+type Capitalized = DeepCapitalize<nested>;
+// {
+//   User: {
+//     Name: string;
+//     Settings: {
+//       Theme: string;
+//     }
+//   }
+// }
+```
+
+This pattern appears in the Capitalize Nest Object Keys challenge (#9775).
+
+## Advanced Patterns
+
+### Discriminated Union from Keys
+
+```typescript
+type Action<T> = {
+  [K in keyof T]: {
+    type: K;
+    payload: T[K];
+  }
+}[keyof T]
+
+type Events = {
+  click: { x: number; y: number };
+  keypress: { key: string };
+  scroll: { top: number };
+}
+
+type EventAction = Action<Events>;
+// { type: 'click'; payload: { x: number; y: number } }
+// | { type: 'keypress'; payload: { key: string } }
+// | { type: 'scroll'; payload: { top: number } }
+```
+
+### Two-Way Key Transformation
+
+```typescript
+type Flip<T extends Record<string, string>> = {
+  [K in keyof T as T[K]]: K
+}
+
+type StatusCodes = {
+  OK: '200';
+  NotFound: '404';
+  ServerError: '500';
+}
+
+type CodeToStatus = Flip<StatusCodes>;
+// { '200': 'OK'; '404': 'NotFound'; '500': 'ServerError' }
+```
+
+### Multiple Variants from Single Type
+
+```typescript
+type MultiVariant<T> = {
+  [K in keyof T as K | `${K & string}Async`]: T[K]
+}
+
+type API = {
+  fetchUser: () => User;
+  deleteUser: (id: string) => void;
+}
+
+type ExtendedAPI = MultiVariant<API>;
+// {
+//   fetchUser: () => User;
+//   fetchUserAsync: () => User;
+//   deleteUser: (id: string) => void;
+//   deleteUserAsync: (id: string) => void;
+// }
+```
+
+## Combining with Utility Types
+
+Key remapping works seamlessly with other TypeScript utilities:
+
+```typescript
+// Omit using key remapping
+type MyOmit<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P]
+}
+
+// Pick using key remapping
+type MyPick<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? P : never]: T[P]
+}
+
+// Readonly for specific keys
+type ReadonlyKeys<T, K extends keyof T> = {
+  readonly [P in keyof T as P extends K ? P : never]: T[P]
+} & {
+  [P in keyof T as P extends K ? never : P]: T[P]
+}
+```
+
+## Common Pitfalls
+
+### 1. Forgetting & string
+
+```typescript
+// ❌ Error: Type 'K' is not assignable to type 'string'
+type Bad<T> = {
+  [K in keyof T as Capitalize<K>]: T[K]
+}
+
+// ✅ Correct
+type Good<T> = {
+  [K in keyof T as Capitalize<K & string>]: T[K]
+}
+```
+
+### 2. Creating Duplicate Keys
+
+```typescript
+// ❌ Results in duplicate 'name' key
+type Duplicate<T> = {
+  [K in keyof T as 'name']: T[K]
+}
+
+// Last property wins, but this is usually not intended
+```
+
+### 3. Not Handling never Properly
+
+```typescript
+// Conditional returns never for some keys
+type Filter<T> = {
+  [K in keyof T as T[K] extends string ? K : never]: T[K]
+}
+
+// This correctly filters out non-string properties
+// never keys are automatically omitted from the resulting type
+```
+
+<Note>
+When a key is mapped to `never`, TypeScript automatically removes it from the final type. This is the standard way to filter keys.
+</Note>
+
+## Practice Challenges
+
+Test your key remapping skills with these challenges:
+
+1. **Capitalize Nest Object Keys** (#9775) - Recursive key transformation
+2. **Omit** (#3) - Filter keys using remapping
+3. **Deep Readonly** (#9) - Recursive mapped types
+
+## Summary
+
+Key remapping with the `as` clause enables:
+- **Key transformation** using template literals and utility types
+- **Key filtering** by mapping unwanted keys to `never`
+- **Conditional logic** for complex key transformations
+- **Pattern matching** to extract or create keys based on naming conventions
+- **Recursive transformations** for nested object structures
+
+<Tip>
+Key remapping is one of the most versatile features in TypeScript's type system. Master it to create flexible, type-safe APIs and utilities!
+</Tip>

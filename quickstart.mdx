@@ -1,80 +1,201 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick start
+description: Get started with your first Type Challenges in minutes
 ---
 
-## Get started in three steps
+## Your first challenge in 3 steps
 
-Get your documentation site running locally and make your first customization.
+Type Challenges uses TypeScript's type system for assertions. Let's start with the simplest challenge to understand how it works.
 
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+<Steps>
+  <Step title="Open the Hello World challenge">
+    The "Hello World" challenge is the perfect starting point. You can solve it in:
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    - [TypeScript Playground](https://www.typescriptlang.org/play?install-plugin=%40type-challenges%2Fplayground-plugin) (no setup required)
+    - [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=YRM.type-challenges)
+    - [Local setup](/play-locally) with your preferred IDE
 
-### Step 2: Deploy your changes
+    For the fastest start, use the TypeScript Playground.
+  </Step>
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
+  <Step title="Understand the challenge">
+    Here's what you'll see:
+
+    ```typescript
+    // This is your code to modify
+    type HelloWorld = any // expected to be a string
+    ```
+
+    And the test cases that must pass:
+
+    ```typescript
+    import type { Equal, Expect, NotAny } from '@type-challenges/utils'
+
+    type cases = [
+      Expect<NotAny<HelloWorld>>,
+      Expect<Equal<HelloWorld, string>>,
+    ]
+    ```
+
+    The tests check two things:
+    1. `HelloWorld` is not the `any` type
+    2. `HelloWorld` equals the `string` type
+  </Step>
+
+  <Step title="Solve it">
+    Change the type definition to make the tests pass:
+
+    ```typescript
+    type HelloWorld = string // ✅ Tests pass!
+    ```
+
+    That's it! If there are no type errors, you've solved the challenge.
+  </Step>
+</Steps>
+
+## Try a real challenge: Pick
+
+Now let's try something more practical. The `Pick` challenge asks you to implement TypeScript's built-in `Pick<T, K>` utility type.
+
+### The challenge
+
+Implement a type that picks a set of properties `K` from type `T`.
+
+```typescript
+type MyPick<T, K> = any
+```
+
+### Example usage
+
+```typescript
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+type TodoPreview = MyPick<Todo, 'title' | 'completed'>
+
+const todo: TodoPreview = {
+  title: 'Clean room',
+  completed: false,
+  // description is not included
+}
+```
+
+### Expected behavior
+
+<CodeGroup>
+
+```typescript Should work
+type TodoPreview = MyPick<Todo, 'title' | 'completed'>
+// Result: { title: string; completed: boolean }
+
+type TodoTitle = MyPick<Todo, 'title'>
+// Result: { title: string }
+```
+
+```typescript Should error
+type Invalid = MyPick<Todo, 'title' | 'invalid'>
+// Should error: 'invalid' is not a key of Todo
+```
+
+</CodeGroup>
+
+<Accordion title="Hint">
+  Think about:
+  - How to iterate over keys in a type
+  - How to constrain `K` to only be keys that exist in `T`
+  - How to build a new object type with selected properties
 </Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+<Accordion title="Solution">
+  ```typescript
+  type MyPick<T, K extends keyof T> = {
+    [P in K]: T[P]
+  }
+  ```
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
+  **Explanation:**
+  - `K extends keyof T` - Constrains K to only be keys that exist in T
+  - `[P in K]` - Mapped type that iterates over each key in K
+  - `T[P]` - Gets the type of property P from T
 </Accordion>
+
+## Understanding difficulty levels
+
+<CardGroup cols={2}>
+  <Card title="Warm-up" icon="mug-hot" color="#14b8a6">
+    **1 challenge** - Introduction to how Type Challenges work
+    
+    Perfect for your first attempt
+  </Card>
+  
+  <Card title="Easy" icon="seedling" color="#7aad0c">
+    **13 challenges** - Basic type operations
+    
+    Examples: Pick, Readonly, First of Array, Tuple Length
+  </Card>
+  
+  <Card title="Medium" icon="dumbbell" color="#d9901a">
+    **Advanced type manipulations**
+    
+    Examples: DeepReadonly, TrimLeft, Capitalize, Promise.all types
+  </Card>
+  
+  <Card title="Hard & Extreme" icon="skull" color="#de3d37">
+    **Complex challenges**
+    
+    Examples: CamelCase, Currying, Union to Intersection
+  </Card>
+</CardGroup>
 
 ## Next steps
 
-Now that you have your docs running, explore these key features:
+<Steps>
+  <Step title="Choose your environment">
+    - **Browser:** [TypeScript Playground](https://www.typescriptlang.org/play?install-plugin=%40type-challenges%2Fplayground-plugin) - instant access
+    - **VS Code:** Install the [extension](https://marketplace.visualstudio.com/items?itemName=YRM.type-challenges)
+    - **Local:** [Set up locally](/play-locally) for full IDE support
+  </Step>
 
-<CardGroup cols={2}>
+  <Step title="Start with easy challenges">
+    Work through the 13 easy challenges to build a strong foundation:
+    - Pick
+    - Readonly
+    - Tuple to Object
+    - First of Array
+    - Length of Tuple
+    - Exclude
+    - Awaited
+    - If
+    - Concat
+    - Includes
+    - Push
+    - Unshift
+    - Parameters
+  </Step>
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+  <Step title="Learn from the community">
+    - Check out solution discussions for different approaches
+    - Join the [Discord community](https://discord.gg/UgKBCq9)
+    - Share your own solutions
+  </Step>
+</Steps>
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  **Pro tip:** Don't just copy solutions. Try to solve each challenge yourself first, then compare your solution with others to learn different approaches.
 </Note>
+
+## Helpful resources
+
+Before tackling harder challenges, familiarize yourself with these TypeScript concepts:
+
+- [Unions and Intersection Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types)
+- [Literal Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types)
+- [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
+- [Advanced Types](https://www.typescriptlang.org/docs/handbook/2/types-from-types.html)
+
+<Tip>
+  Many real-world TypeScript libraries like [type-fest](https://github.com/sindresorhus/type-fest) started as solutions to similar type challenges. The skills you learn here directly apply to building better TypeScript projects.
+</Tip>

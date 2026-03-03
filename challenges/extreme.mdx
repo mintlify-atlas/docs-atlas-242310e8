@@ -1,0 +1,472 @@
+---
+title: Extreme Challenges
+description: Push TypeScript's type system to its absolute limits with 17 extreme challenges requiring expert-level knowledge
+---
+
+# Extreme Challenges
+
+Extreme challenges represent the pinnacle of TypeScript type-level programming. These require deep understanding of the type system's edge cases, limitations, and advanced capabilities.
+
+<Warning>
+  **Total Challenges**: 17 | **Recommended for**: TypeScript experts ready for the ultimate test
+</Warning>
+
+## All Extreme Challenges
+
+<CardGroup cols={2}>
+  <Card title="#5 - Get Readonly Keys" href="https://tsch.js.org/5/play" icon="lock">
+    Extract readonly property keys from objects
+  </Card>
+  <Card title="#151 - Query String Parser" href="https://tsch.js.org/151/play" icon="search">
+    Parse URL query strings into typed objects
+  </Card>
+  <Card title="#216 - Slice" href="https://tsch.js.org/216/play" icon="scissors">
+    Implement array slice at type level
+  </Card>
+  <Card title="#274 - Integers Comparator" href="https://tsch.js.org/274/play" icon="balance-scale">
+    Compare integer types with &lt;, &gt;, =
+  </Card>
+  <Card title="#462 - Currying 2" href="https://tsch.js.org/462/play" icon="function">
+    Advanced currying with multiple arguments
+  </Card>
+  <Card title="#476 - Sum" href="https://tsch.js.org/476/play" icon="plus">
+    Add numbers at type level
+  </Card>
+  <Card title="#517 - Multiply" href="https://tsch.js.org/517/play" icon="xmark">
+    Multiply numbers in type system
+  </Card>
+  <Card title="#697 - Tag" href="https://tsch.js.org/697/play" icon="tag">
+    Implement nominal typing with tags
+  </Card>
+  <Card title="#734 - Inclusive Range" href="https://tsch.js.org/734/play" icon="arrows-left-right">
+    Generate number ranges as union types
+  </Card>
+  <Card title="#741 - Sort" href="https://tsch.js.org/741/play" icon="arrow-down-1-9">
+    Sort tuples at type level
+  </Card>
+  <Card title="#869 - DistributeUnions" href="https://tsch.js.org/869/play" icon="diagram-project">
+    Control union distribution behavior
+  </Card>
+  <Card title="#925 - Assert Array Index" href="https://tsch.js.org/925/play" icon="list-check">
+    Validate array index access at type level
+  </Card>
+  <Card title="#6228 - JSON Parser" href="https://tsch.js.org/6228/play" icon="code">
+    Parse JSON strings into typed structures
+  </Card>
+  <Card title="#7561 - Subtract" href="https://tsch.js.org/7561/play" icon="minus">
+    Subtract numbers in type system
+  </Card>
+  <Card title="#31447 - CountReversePairs" href="https://tsch.js.org/31447/play" icon="chart-line">
+    Count reverse pairs in arrays (algorithms)
+  </Card>
+  <Card title="#31997 - Parameter Intersection" href="https://tsch.js.org/31997/play" icon="circle-nodes">
+    Intersect function parameters
+  </Card>
+  <Card title="#33345 - Dynamic Route" href="https://tsch.js.org/33345/play" icon="route">
+    Parse dynamic route patterns like Next.js
+  </Card>
+</CardGroup>
+
+## Featured Challenges
+
+<AccordionGroup>
+  <Accordion title="#5 - Get Readonly Keys" icon="lock">
+    
+### Description
+
+Implement a generic `GetReadonlyKeys<T>` that returns a union of the readonly keys of an Object.
+
+### Example
+
+```typescript
+interface Todo {
+  readonly title: string
+  readonly description: string
+  completed: boolean
+}
+
+type Keys = GetReadonlyKeys<Todo> // "title" | "description"
+```
+
+### Key Concepts
+- Property modifier detection
+- Mapped type conditionals
+- Key filtering
+
+### Why It's Extreme
+Detecting readonly modifiers requires understanding how TypeScript handles property assignability and variance.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/5/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#151 - Query String Parser" icon="search">
+    
+### Description
+
+Parse a query string into a typed object, handling arrays, nested objects, and special characters.
+
+### Example
+
+```typescript
+type Result = ParseQueryString<'foo=bar&baz[]=1&baz[]=2'>
+// { foo: 'bar', baz: ['1', '2'] }
+```
+
+### Key Concepts
+- Complex string parsing
+- State machines in types
+- Nested structure building
+
+### Why It's Extreme
+Requires parsing multiple syntaxes (arrays, objects, key-value pairs) and building complex nested structures.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/151/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#274 - Integers Comparator" icon="balance-scale">
+    
+### Description
+
+Implement a comparator that determines the relationship between two integers: less than, equal to, or greater than.
+
+### Example
+
+```typescript
+type Result1 = Comparator<5, 10> // Comparison.Lower
+type Result2 = Comparator<10, 5> // Comparison.Greater  
+type Result3 = Comparator<5, 5> // Comparison.Equal
+```
+
+### Key Concepts
+- Type-level number comparison
+- Digit-by-digit analysis
+- Sign handling
+
+### Why It's Extreme
+Requires implementing mathematical comparison logic purely in the type system, handling negative numbers and multiple digits.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/274/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#476 - Sum" icon="plus">
+    
+### Description
+
+Implement addition of two positive integers in the type system.
+
+### Example
+
+```typescript
+type Result1 = Sum<2, 3> // 5
+type Result2 = Sum<42, 18> // 60
+type Result3 = Sum<100, 200> // 300
+```
+
+### Key Concepts
+- Type-level arithmetic
+- Carry handling
+- Digit-by-digit addition
+
+### Why It's Extreme
+Implementing full addition with carries requires complex string parsing and mathematical logic in the type system.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/476/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#6228 - JSON Parser" icon="code">
+    
+### Description
+
+Parse a JSON string literal into the corresponding TypeScript type.
+
+### Example
+
+```typescript
+type Result = Parse<'{"name": "John", "age": 30, "active": true}'>
+// { name: "John", age: 30, active: true }
+```
+
+### Key Concepts
+- Complex parser implementation
+- Multiple token types
+- Nested structure handling
+- Whitespace management
+
+### Why It's Extreme
+Requires a full lexer/parser implementation in the type system, handling all JSON data types and nested structures.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/6228/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+
+  <Accordion title="#741 - Sort" icon="arrow-down-1-9">
+    
+### Description
+
+Implement a type-level sort algorithm for tuples of numbers.
+
+### Example
+
+```typescript
+type Result = Sort<[3, 1, 4, 1, 5, 9, 2, 6]>
+// [1, 1, 2, 3, 4, 5, 6, 9]
+```
+
+### Key Concepts
+- Sorting algorithms in types
+- Comparison operations
+- Recursive list processing
+
+### Why It's Extreme
+Implementing sorting requires comparison, partitioning, and recursive restructuring - all in the type system.
+
+<Card title="Try this challenge" icon="code" href="https://tsch.js.org/741/play">
+  Open in TypeScript Playground
+</Card>
+
+  </Accordion>
+</AccordionGroup>
+
+## Extreme Patterns
+
+### 1. Property Modifier Detection
+
+Detect readonly, optional, and other modifiers:
+
+```typescript
+type GetReadonlyKeys<T> = {
+  [K in keyof T]-?: Equal<
+    { [P in K]: T[K] },
+    { readonly [P in K]: T[K] }
+  > extends true ? K : never
+}[keyof T]
+```
+
+### 2. Multi-Stage Parsing
+
+Build parsers with multiple stages:
+
+```typescript
+// Lexer stage
+type Tokenize<S> = ...
+
+// Parser stage  
+type Parse<Tokens> = ...
+
+// Full pipeline
+type JSONParse<S> = Parse<Tokenize<S>>
+```
+
+### 3. Type-Level Arithmetic
+
+Implement mathematical operations:
+
+```typescript
+type Sum<A extends number, B extends number> = 
+  // Convert to digit arrays
+  // Process digit by digit with carry
+  // Convert back to number
+```
+
+### 4. Algorithm Implementation
+
+Translate runtime algorithms to types:
+
+```typescript
+type QuickSort<T extends number[]> = 
+  T extends [infer Pivot extends number, ...infer Rest extends number[]]
+    ? [
+        ...QuickSort<Filter<Rest, LessThan<Pivot>>>,
+        Pivot,
+        ...QuickSort<Filter<Rest, GreaterThan<Pivot>>>
+      ]
+    : []
+```
+
+### 5. State Machines
+
+Implement stateful parsers:
+
+```typescript
+type ParseRoute<
+  S extends string,
+  State = 'normal',
+  Acc = {}
+> = // State machine implementation
+```
+
+## Tips for Extreme Challenges
+
+<AccordionGroup>
+  <Accordion title="Understand TypeScript's limits">
+    Know the constraints you're working within:
+    - Maximum type instantiation depth (~50 in complex cases)
+    - Type alias resolution limits
+    - Performance considerations
+    
+    ```typescript
+    // This might hit depth limits
+    type DeepRecursive<N> = N extends 0 
+      ? [] 
+      : [N, ...DeepRecursive<Subtract<N, 1>>]
+    ```
+  </Accordion>
+  
+  <Accordion title="Build helper type libraries">
+    Create reusable utilities:
+    ```typescript
+    // Number utilities
+    type IsZero<N> = ...
+    type IsNegative<N> = ...
+    type Abs<N> = ...
+    
+    // String utilities
+    type IsDigit<C> = ...
+    type IsWhitespace<C> = ...
+    type CharAt<S, N> = ...
+    ```
+  </Accordion>
+  
+  <Accordion title="Study parser theory">
+    Understanding lexers and parsers helps:
+    - Tokenization strategies
+    - Recursive descent parsing
+    - Lookahead techniques
+    
+    Apply these concepts to type-level parsing.
+  </Accordion>
+  
+  <Accordion title="Use type-level debugging">
+    Debug complex types systematically:
+    ```typescript
+    // Extract intermediate results
+    type Debug1 = FirstStep<Input>
+    type Debug2 = SecondStep<Debug1>
+    type Debug3 = ThirdStep<Debug2>
+    
+    // Test each step independently
+    type Test1 = Expect<Equal<Debug1, Expected1>>
+    ```
+  </Accordion>
+  
+  <Accordion title="Optimize for depth">
+    Reduce recursion depth where possible:
+    ```typescript
+    // Deep recursion
+    type CountBad<T> = T extends [any, ...infer R] 
+      ? Add<1, CountBad<R>> 
+      : 0
+    
+    // Tail recursion with accumulator
+    type CountGood<T, Acc = 0> = T extends [any, ...infer R]
+      ? CountGood<R, Add<Acc, 1>>
+      : Acc
+    ```
+  </Accordion>
+  
+  <Accordion title="Think mathematically">
+    Many challenges are mathematical:
+    - Number theory for arithmetic
+    - Algorithm analysis for sorting
+    - Graph theory for tree traversal
+    
+    Study the mathematical foundations before implementing.
+  </Accordion>
+</AccordionGroup>
+
+## Common Challenges
+
+<Warning>
+  **Stack Depth**: Complex recursion can exceed TypeScript's type instantiation limit. Use tail recursion and accumulators.
+</Warning>
+
+<Warning>
+  **Performance**: Type checking extreme challenges can be slow. Optimize hot paths and minimize unnecessary type instantiations.
+</Warning>
+
+<Warning>
+  **Precision**: Number arithmetic has limits. Very large numbers may not work correctly.
+</Warning>
+
+## Learning Path
+
+<Steps>
+  <Step title="Master Hard Challenges First">
+    Ensure you're comfortable with all hard challenges before attempting extreme ones.
+  </Step>
+  <Step title="Start with Simpler Extremes (5, 697, 869)">
+    Begin with challenges that extend hard-level concepts.
+  </Step>
+  <Step title="Learn Type-Level Math (476, 517, 7561)">
+    Build arithmetic operations to understand type-level computation.
+  </Step>
+  <Step title="Implement Parsers (151, 6228, 33345)">
+    Create complex parsers to master state machines.
+  </Step>
+  <Step title="Tackle Algorithms (274, 741, 31447)">
+    Implement classic algorithms in the type system.
+  </Step>
+</Steps>
+
+## Achievement Unlocked
+
+Completing all extreme challenges means you've mastered:
+
+<CardGroup cols={2}>
+  <Card title="Type-Level Programming" icon="code">
+    You can implement complex logic purely in types
+  </Card>
+  <Card title="Parser Construction" icon="puzzle-piece">
+    You can build sophisticated parsers in the type system
+  </Card>
+  <Card title="Mathematical Operations" icon="calculator">
+    You can perform arithmetic and comparisons at type level
+  </Card>
+  <Card title="Algorithm Translation" icon="brain">
+    You can translate runtime algorithms to compile-time types
+  </Card>
+</CardGroup>
+
+## Resources for Experts
+
+<CardGroup cols={2}>
+  <Card title="TypeScript Source Code" icon="github" href="https://github.com/microsoft/TypeScript">
+    Study how TypeScript itself handles type operations
+  </Card>
+  <Card title="Type System Theory" icon="book" href="https://www.typescriptlang.org/docs/handbook/type-compatibility.html">
+    Understand structural typing and variance
+  </Card>
+  <Card title="Community Solutions" icon="users" href="https://github.com/type-challenges/type-challenges/issues">
+    Learn from other experts' approaches
+  </Card>
+  <Card title="Advanced Patterns" icon="lightbulb" href="https://www.typescriptlang.org/docs/handbook/2/types-from-types.html">
+    Deep dive into creating types from types
+  </Card>
+</CardGroup>
+
+## What's Next?
+
+You've conquered Type Challenges! Consider:
+
+- **Contributing**: Share your solutions and help others
+- **Creating**: Design your own type challenges
+- **Teaching**: Write articles or tutorials about type-level programming
+- **Building**: Use these skills in real-world TypeScript libraries
+
+<Card title="Back to Overview" icon="home" href="/challenges/overview">
+  Return to the challenges overview
+</Card>

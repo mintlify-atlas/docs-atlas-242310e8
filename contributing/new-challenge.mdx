@@ -1,0 +1,254 @@
+---
+title: Creating a New Challenge
+description: Step-by-step guide to proposing and creating new TypeScript type challenges
+---
+
+Have an interesting type problem? Turn it into a challenge for the community! This guide walks you through creating a new Type Challenges challenge.
+
+## Before You Start
+
+<Check>
+Make sure your challenge:
+- Is solvable using TypeScript's type system
+- Works in [strict mode](https://www.typescriptlang.org/tsconfig#strict)
+- Has clear requirements and examples
+- Includes test cases to verify solutions
+</Check>
+
+<Note>
+You don't need to provide a detailed solution or guide - just ensure the challenge is solvable. The community will figure out the solutions!
+</Note>
+
+## Creating a Challenge
+
+<Steps>
+  <Step title="Open a New Challenge Issue">
+    Go to the [Type Challenges repository](https://github.com/type-challenges/type-challenges/issues/new/choose) and select the "New Challenge" template.
+    
+    A pull request will be auto-generated based on your issue and will always reflect your changes.
+  </Step>
+
+  <Step title="Fill in Basic Information">
+    Provide the basic metadata for your challenge using YAML format:
+
+    ```yaml
+    difficulty: easy # easy / medium / hard / extreme
+    title: Your Challenge Name
+    tags: union, array # optional: separate by comma
+    ```
+
+    **Difficulty Levels:**
+    - `warm-up` - Introduction to the playground
+    - `easy` - Basic type operations
+    - `medium` - Moderate complexity, requires understanding of type utilities
+    - `hard` - Advanced type manipulation
+    - `extreme` - Complex type-level programming challenges
+  </Step>
+
+  <Step title="Write the Question">
+    Describe your challenge between the `<!--question-start-->` and `<!--question-end-->` markers. Markdown is supported.
+
+    Include:
+    - Clear description of what needs to be implemented
+    - Real-world context (if applicable)
+    - Example usage showing the expected behavior
+
+    The README.md file should contain the challenge description. Here's an example:
+    
+    ```markdown
+    Implement the built-in `Pick<T, K>` generic without using it.
+    
+    Constructs a type by picking the set of properties `K` from `T`.
+    
+    For example:
+    
+    interface Todo {
+      title: string
+      description: string
+      completed: boolean
+    }
+    
+    type TodoPreview = MyPick<Todo, 'title' | 'completed'>
+    
+    const todo: TodoPreview = {
+        title: 'Clean room',
+        completed: false,
+    }
+    ```
+  </Step>
+
+  <Step title="Create the Template">
+    Provide the starting template for challengers. This is what users will see when they begin the challenge.
+
+    **Guidelines:**
+    - Use `any` as the placeholder implementation
+    - Include the correct type/function signature
+    - Keep it minimal - just enough to get started
+
+    ```ts
+    type MyPick<T, K> = any
+    ```
+
+    Or for function types:
+
+    ```ts
+    type MyFunction<T> = any
+    ```
+  </Step>
+
+  <Step title="Write Test Cases">
+    Provide test cases that verify solutions. Use utilities from `@type-challenges/utils` for assertions.
+
+    **Available Test Utilities:**
+    - `Expect<T>` - Marks a test case
+    - `Equal<X, Y>` - Asserts two types are equal
+    - `NotEqual<X, Y>` - Asserts two types are not equal
+    - `ExpectTrue<T>` - Asserts a type is `true`
+    - `ExpectFalse<T>` - Asserts a type is `false`
+    - `NotAny<T>` - Asserts a type is not `any`
+
+    ```ts
+    import type { Equal, Expect } from '@type-challenges/utils'
+
+    type cases = [
+      Expect<Equal<Expected1, MyPick<Todo, 'title'>>>,
+      Expect<Equal<Expected2, MyPick<Todo, 'title' | 'completed'>>>,
+      // @ts-expect-error - should error on invalid keys
+      MyPick<Todo, 'title' | 'completed' | 'invalid'>,
+    ]
+
+    interface Todo {
+      title: string
+      description: string
+      completed: boolean
+    }
+
+    interface Expected1 {
+      title: string
+    }
+
+    interface Expected2 {
+      title: string
+      completed: boolean
+    }
+    ```
+
+    **Tips for Good Test Cases:**
+    - Cover the happy path (basic usage)
+    - Test edge cases (empty types, unions, etc.)
+    - Include error cases with `@ts-expect-error`
+    - Test with different type combinations
+  </Step>
+
+  <Step title="Submit Your Issue">
+    Review your challenge and submit the issue. The automated system will:
+    - Create a pull request with your challenge
+    - Generate the challenge files in the correct structure
+    - Keep the PR updated with any changes to your issue
+  </Step>
+</Steps>
+
+## Challenge File Structure
+
+Once your challenge is accepted, it will be added to the repository with this structure:
+
+```
+questions/
+└── [number]-[difficulty]-[challenge-name]/
+    ├── README.md           # Challenge description (auto-generated)
+    ├── README.zh-CN.md    # Chinese translation (optional)
+    ├── README.ja.md       # Japanese translation (optional)
+    ├── README.ko.md       # Korean translation (optional)
+    ├── info.yml           # Challenge metadata
+    ├── template.ts        # Starting template
+    └── test-cases.ts      # Test cases
+```
+
+### Example: `info.yml`
+
+```yaml
+title: Pick
+
+author:
+  name: Anthony Fu
+  email: hi@antfu.me
+  github: antfu
+
+tags: union, built-in
+
+related: 3  # Optional: related challenge number
+
+difficulty: easy
+```
+
+### Example: `template.ts`
+
+```typescript
+type MyPick<T, K> = any
+```
+
+### Example: `test-cases.ts`
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<Expected1, MyPick<Todo, 'title'>>>,
+  Expect<Equal<Expected2, MyPick<Todo, 'title' | 'completed'>>>,
+  // @ts-expect-error
+  MyPick<Todo, 'title' | 'completed' | 'invalid'>,
+]
+
+interface Todo {
+  title: string
+  description: string
+  completed: boolean
+}
+
+interface Expected1 {
+  title: string
+}
+
+interface Expected2 {
+  title: string
+  completed: boolean
+}
+```
+
+## Tips for Great Challenges
+
+<Tip>
+**Draw from Real Experience**
+
+The best challenges come from real-world problems. If you've struggled with a type issue at work, it's likely others will find it interesting too!
+</Tip>
+
+<Tip>
+**Start Simple**
+
+If you're new to creating challenges, start with an easy or medium difficulty challenge to get familiar with the process.
+</Tip>
+
+<Tip>
+**Clear Examples**
+
+Good examples make the difference between a confusing challenge and a great learning experience. Show concrete usage, not just abstract types.
+</Tip>
+
+<Tip>
+**Comprehensive Test Cases**
+
+Think about edge cases! What happens with empty arrays? Union types? Optional properties? Great test cases make great challenges.
+</Tip>
+
+## Getting Help
+
+Need help creating your challenge?
+
+- **Discord** - Ask in the [Type Challenges Discord](https://discord.gg/UgKBCq9)
+- **Discussions** - Post in [GitHub Discussions](https://github.com/type-challenges/type-challenges/discussions)
+- **Review Examples** - Look at existing challenges in the [questions folder](https://github.com/type-challenges/type-challenges/tree/main/questions)
+
+<Warning>
+Remember: All challenges must work in TypeScript's strict mode. Test your challenge with `"strict": true` in tsconfig.json!
+</Warning>

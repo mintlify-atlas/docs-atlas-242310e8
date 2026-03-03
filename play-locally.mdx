@@ -1,0 +1,335 @@
+---
+title: Play locally
+description: Set up Type Challenges in your local development environment with full IDE support
+---
+
+## Why play locally?
+
+While the TypeScript Playground is great for quick practice, playing locally gives you:
+
+- **Full IDE support** - IntelliSense, go-to-definition, and all your favorite editor features
+- **Git integration** - Track your progress and solutions
+- **Offline access** - Work on challenges anywhere
+- **Custom setup** - Use your preferred TypeScript configuration and tools
+
+## Prerequisites
+
+You'll need the following installed on your machine:
+
+<CardGroup cols={2}>
+  <Card title="Node.js" icon="node-js" color="#339933">
+    Latest LTS version recommended
+    
+    [Download Node.js](https://nodejs.org/)
+  </Card>
+  <Card title="pnpm" icon="box" color="#F69220">
+    Fast, disk space efficient package manager
+    
+    [Install pnpm](https://pnpm.io/installation)
+  </Card>
+</CardGroup>
+
+<Note>
+  Type Challenges uses `pnpm` as the package manager. While you could use `npm` or `yarn`, we recommend using `pnpm` as specified in the project.
+</Note>
+
+## Installation
+
+<Steps>
+  <Step title="Clone the repository">
+    First, clone the Type Challenges repository:
+
+    ```bash
+    git clone https://github.com/type-challenges/type-challenges.git
+    cd type-challenges
+    ```
+
+    <Tip>
+      Consider forking the repository first so you can push your solutions to your own GitHub account.
+    </Tip>
+  </Step>
+
+  <Step title="Install dependencies">
+    Install all required dependencies using pnpm:
+
+    ```bash
+    pnpm install
+    ```
+
+    This will install:
+    - TypeScript compiler and type utilities
+    - Build scripts and tooling
+    - Development dependencies
+  </Step>
+
+  <Step title="Generate the playground">
+    Run the generate script to create a local playground:
+
+    ```bash
+    pnpm generate
+    ```
+
+    The script will prompt you to select your preferred language:
+    - English
+    - 简体中文 (Simplified Chinese)
+    - 日本語 (Japanese)
+    - 한국어 (Korean)
+    - Português (Portuguese)
+
+    After selecting, all challenges will be generated in the `./playground` folder.
+  </Step>
+
+  <Step title="Open in your IDE">
+    Open the `playground` folder in your favorite IDE:
+
+    ```bash
+    # VS Code
+    code playground
+
+    # Or open the folder manually in your IDE
+    ```
+
+    You'll see folders for each challenge organized by difficulty.
+  </Step>
+</Steps>
+
+## Playground structure
+
+After generation, your playground folder will look like this:
+
+```
+playground/
+├── warm/
+│   └── 00013-hello-world.ts
+├── easy/
+│   ├── 00004-pick.ts
+│   ├── 00007-readonly.ts
+│   ├── 00011-tuple-to-object.ts
+│   └── ...
+├── medium/
+│   ├── 00002-return-type.ts
+│   ├── 00003-omit.ts
+│   └── ...
+├── hard/
+│   └── ...
+└── extreme/
+    └── ...
+```
+
+Each file contains:
+- The challenge description
+- Template code to modify
+- Test cases that must pass
+
+## Working on challenges
+
+Here's the typical workflow:
+
+<Steps>
+  <Step title="Pick a challenge">
+    Open any challenge file, for example `easy/00004-pick.ts`:
+
+    ```typescript
+    /*
+      00004 - Pick
+      -------
+      Implement the built-in Pick<T, K> generic without using it.
+      
+      Constructs a type by picking the set of properties K from T
+    */
+
+    /* _____________ Your Code Here _____________ */
+
+    type MyPick<T, K> = any
+
+    /* _____________ Test Cases _____________ */
+    import type { Equal, Expect } from '@type-challenges/utils'
+
+    type cases = [
+      Expect<Equal<Expected1, MyPick<Todo, 'title'>>>,
+      Expect<Equal<Expected2, MyPick<Todo, 'title' | 'completed'>>>,
+      // ... more test cases
+    ]
+    ```
+  </Step>
+
+  <Step title="Write your solution">
+    Replace the template code with your implementation:
+
+    ```typescript
+    type MyPick<T, K extends keyof T> = {
+      [P in K]: T[P]
+    }
+    ```
+  </Step>
+
+  <Step title="Check for type errors">
+    Your IDE will show type errors if the tests don't pass. When all red squiggles disappear, you've solved it!
+
+    <Tip>
+      Hover over test cases to see detailed type information and understand why a test might be failing.
+    </Tip>
+  </Step>
+</Steps>
+
+## Updating the playground
+
+If new challenges are added to the repository, you can update your playground while keeping your solutions:
+
+<CodeGroup>
+
+```bash Keep your changes
+pnpm generate --keep-changes
+```
+
+```bash Short version
+pnpm generate -K
+```
+
+</CodeGroup>
+
+This will:
+- Add new challenges
+- Keep your existing solutions
+- Update challenge descriptions if they've changed
+
+<Warning>
+  Running `pnpm generate` without the `--keep-changes` flag will overwrite your solutions. Always use `-K` if you want to preserve your work.
+</Warning>
+
+## IDE recommendations
+
+### VS Code
+
+VS Code has excellent TypeScript support out of the box. Consider these extensions:
+
+- **Type Challenges Extension** - Browse and solve challenges directly in VS Code
+  - Install from [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=YRM.type-challenges)
+- **Error Lens** - Show TypeScript errors inline
+- **Pretty TypeScript Errors** - More readable error messages
+
+### Other IDEs
+
+Any IDE with TypeScript language support will work:
+
+- **WebStorm** - Full TypeScript support built-in
+- **Neovim** - Use with `typescript-language-server`
+- **Emacs** - Use with `tide` or LSP mode
+- **Sublime Text** - Use with LSP-typescript
+
+## Tips for local development
+
+<AccordionGroup>
+  <Accordion title="Track your progress with Git">
+    Create a new branch for your solutions:
+
+    ```bash
+    git checkout -b my-solutions
+    git add playground/
+    git commit -m "Add solutions for easy challenges"
+    ```
+
+    This lets you:
+    - Track which challenges you've completed
+    - Keep a history of different approaches
+    - Share your solutions on GitHub
+  </Accordion>
+
+  <Accordion title="Use TypeScript's strict mode">
+    All challenges assume TypeScript's strict mode is enabled. This is already configured in the project's `tsconfig.json`.
+
+    If you're setting up a custom configuration, ensure:
+
+    ```json
+    {
+      "compilerOptions": {
+        "strict": true
+      }
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Understand the test utilities">
+    Type Challenges uses utility types from `@type-challenges/utils`:
+
+    - `Expect<T>` - Asserts that T is true
+    - `Equal<A, B>` - Checks if A and B are the same type
+    - `NotEqual<A, B>` - Checks if A and B are different types
+    - `NotAny<T>` - Ensures T is not the any type
+
+    You don't need to understand their implementation, just how to use them in test cases.
+  </Accordion>
+
+  <Accordion title="Compare with built-in types">
+    For challenges that ask you to implement built-in utilities (like Pick, Omit, Readonly), compare your solution with TypeScript's implementation:
+
+    ```typescript
+    // Your implementation
+    type MyPick<T, K extends keyof T> = {
+      [P in K]: T[P]
+    }
+
+    // TypeScript's implementation (in lib.es5.d.ts)
+    type Pick<T, K extends keyof T> = {
+      [P in K]: T[P]
+    }
+    ```
+
+    You can Cmd/Ctrl+Click on built-in types to see their definitions.
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="pnpm install fails">
+    Make sure you have the correct Node.js version:
+
+    ```bash
+    node --version  # Should be 16.x or higher
+    ```
+
+    If you're using an older version, update Node.js or use a version manager like `nvm`:
+
+    ```bash
+    nvm install --lts
+    nvm use --lts
+    ```
+  </Accordion>
+
+  <Accordion title="IDE not showing TypeScript errors">
+    1. Ensure your IDE's TypeScript version matches the project's
+    2. Try reloading the TypeScript server
+    3. Check that you opened the `playground` folder (not the root repository)
+
+    In VS Code: Cmd/Ctrl+Shift+P → "TypeScript: Reload Project"
+  </Accordion>
+
+  <Accordion title="Generated playground is empty">
+    Make sure you ran `pnpm install` before `pnpm generate`:
+
+    ```bash
+    pnpm install
+    pnpm generate
+    ```
+
+    If issues persist, try clearing and reinstalling:
+
+    ```bash
+    rm -rf node_modules
+    pnpm install
+    pnpm generate
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Start solving" icon="code" href="/quickstart">
+    Begin with the warm-up challenge and work your way up
+  </Card>
+  <Card title="Join the community" icon="discord" href="https://discord.gg/UgKBCq9">
+    Get help and discuss solutions with other developers
+  </Card>
+</CardGroup>

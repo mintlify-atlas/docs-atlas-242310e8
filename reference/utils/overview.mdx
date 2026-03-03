@@ -1,0 +1,80 @@
+---
+title: '@type-challenges/utils'
+description: 'Testing utilities for TypeScript type challenges'
+---
+
+The `@type-challenges/utils` package provides a comprehensive set of type-level utilities for testing and validating TypeScript types. These utilities enable you to write type assertions that are evaluated at compile time.
+
+## Installation
+
+```bash
+npm install -D @type-challenges/utils
+```
+
+## Usage
+
+Import the utilities you need in your TypeScript files:
+
+```typescript
+import type { Equal, Expect, ExpectTrue, ExpectFalse } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<MyType, ExpectedType>>,
+  ExpectTrue<SomeCondition>,
+  ExpectFalse<AnotherCondition>,
+]
+```
+
+## Available Utilities
+
+### Assertion Utilities
+
+- [Expect](/reference/utils/expect) - Generic type assertion wrapper
+- [ExpectTrue](/reference/utils/expect#expecttrue) - Assert a type resolves to `true`
+- [ExpectFalse](/reference/utils/expect#expectfalse) - Assert a type resolves to `false`
+- [ExpectExtends](/reference/utils/expect#expectextends) - Assert a value type extends an expected type
+- [ExpectValidArgs](/reference/utils/expect#expectvalidargs) - Assert function arguments are valid
+
+### Comparison Utilities
+
+- [Equal](/reference/utils/equal) - Deep equality check between two types
+- [NotEqual](/reference/utils/equal#notequal) - Inverse of Equal
+- [Alike](/reference/utils/alike) - Structural equality with merged intersections
+
+### Type Detection
+
+- [IsAny](/reference/utils/alike#isany) - Detect if a type is `any`
+- [NotAny](/reference/utils/alike#notany) - Inverse of IsAny
+- [IsTrue](/reference/utils/expect#istrue) - Assert a type is `true`
+- [IsFalse](/reference/utils/expect#isfalse) - Assert a type is `false`
+
+### Advanced Utilities
+
+- [Debug](/reference/utils/alike#debug) - Expand type for better readability
+- [MergeInsertions](/reference/utils/alike#mergeinsertions) - Recursively merge object intersections
+- [UnionToIntersection](/reference/utils/alike#uniontointersection) - Convert union types to intersection types
+
+## Type Testing Pattern
+
+The standard pattern for type testing in Type Challenges is to create a type alias containing a tuple of test cases:
+
+```typescript
+import type { Equal, Expect } from '@type-challenges/utils'
+
+type cases = [
+  Expect<Equal<Result1, Expected1>>,
+  Expect<Equal<Result2, Expected2>>,
+  // ... more test cases
+]
+```
+
+If any assertion fails, TypeScript will produce a compile-time error, indicating which test case failed.
+
+## Error Testing
+
+You can test that certain type operations should produce errors using the `@ts-expect-error` directive:
+
+```typescript
+// @ts-expect-error - This should fail
+MyType<InvalidArgument>
+```

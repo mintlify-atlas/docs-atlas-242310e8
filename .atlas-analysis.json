@@ -1,0 +1,97 @@
+{
+  "projectType": "general",
+  "projectName": "Type Challenges",
+  "projectDescription": "Collection of TypeScript type challenges with online judge to help you better understand the type system",
+  "theme": "aspen",
+  "primaryColor": "#3178C6",
+  "lightColor": "#7aad0c",
+  "darkColor": "#2d5a8c",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "play-locally"
+            ]
+          },
+          {
+            "group": "Challenges",
+            "pages": [
+              "challenges/overview",
+              "challenges/warm-up",
+              "challenges/easy",
+              "challenges/medium",
+              "challenges/hard",
+              "challenges/extreme"
+            ]
+          },
+          {
+            "group": "Learning Resources",
+            "pages": [
+              "resources/official-docs",
+              "resources/articles",
+              "resources/videos",
+              "resources/books"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/understanding-infer",
+              "guides/key-remapping",
+              "guides/recursive-types"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Reference",
+        "groups": [
+          {
+            "group": "Utils",
+            "pages": [
+              "reference/utils/overview",
+              "reference/utils/expect",
+              "reference/utils/equal",
+              "reference/utils/alike"
+            ]
+          },
+          {
+            "group": "Contributing",
+            "pages": [
+              "contributing/overview",
+              "contributing/new-challenge",
+              "contributing/solutions"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "190+ TypeScript type challenges across 5 difficulty levels",
+    "Built-in assertion utilities for type testing",
+    "Multiple ways to play: TypeScript Playground plugin, local IDE, or VS Code extension",
+    "Online judge system with instant feedback",
+    "Multi-language support (English, Chinese, Japanese, Korean, Portuguese)",
+    "Community-driven with solutions and discussions"
+  ],
+  "publicApiSurface": [
+    "Expect<T>",
+    "ExpectTrue<T>",
+    "ExpectFalse<T>",
+    "Equal<X, Y>",
+    "NotEqual<X, Y>",
+    "IsAny<T>",
+    "NotAny<T>",
+    "Alike<X, Y>",
+    "ExpectExtends<VALUE, EXPECTED>",
+    "ExpectValidArgs<FUNC, ARGS>",
+    "UnionToIntersection<U>"
+  ]
+}
